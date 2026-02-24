@@ -195,14 +195,19 @@ class OpenMemory:
         except Exception:
             pass
 
+        # Calculate user-facing stats (excluding system memories)
+        user_memories = [m for m in self.short_term if m.memory_type != "system"]
+        user_types = {k: v for k, v in types.items() if k != "system"}
+
         return {
-            "total_memories": len(self.short_term) + long_term_count,
-            "short_term": len(self.short_term),
+            "total_memories": len(user_memories) + long_term_count,
+            "short_term": len(user_memories),
             "short_term_max": self.max_short_term,
             "long_term": long_term_count,
-            "by_type": types,
+            "by_type": user_types,
             "max_capacity": self.max_short_term,
-            "utilization": len(self.short_term) / self.max_short_term,
+            "utilization": len(user_memories) / self.max_short_term,
+            "system_memories": types.get("system", 0),  # Separate count for system
         }
 
 

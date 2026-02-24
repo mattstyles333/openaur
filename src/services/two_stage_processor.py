@@ -93,6 +93,43 @@ class TwoStageProcessor:
         else:
             return '{"intent": "chat", "needs_action": false, "needs_package": false, "needs_memory": false, "tools_mentioned": [], "confidence": 0.9}'
 
+    def is_simple_query(self, user_message: str) -> bool:
+        """Detect if query is simple enough for heart-only response."""
+        msg_lower = user_message.lower().strip()
+
+        # Simple greeting patterns
+        greetings = ["hi", "hello", "hey", "howdy", "greetings", "yo", "sup"]
+        if msg_lower in greetings or any(msg_lower.startswith(g) for g in greetings):
+            return True
+
+        # Simple status/check queries
+        simple_patterns = [
+            "how are you",
+            "status",
+            "health",
+            "heart",
+            "what can you do",
+            "help",
+            "info",
+            "about",
+            "time",
+            "date",
+            "weather",
+            "ok",
+            "thanks",
+            "thank you",
+            "bye",
+            "goodbye",
+        ]
+        if any(pattern in msg_lower for pattern in simple_patterns):
+            return True
+
+        # Very short queries (likely simple)
+        if len(msg_lower) < 20 and "?" not in msg_lower:
+            return True
+
+        return False
+
     async def analyze_intent(self, user_message: str) -> Dict[str, Any]:
         """Analyze user intent using fast model."""
         system_prompt = """You are an intent analysis system. Analyze the user's query and return a JSON object with:

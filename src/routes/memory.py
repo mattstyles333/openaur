@@ -78,6 +78,10 @@ async def retrieve_memories(request: MemoryQueryRequest):
         min_importance=request.min_importance,
     )
 
+    # Filter out system memories (pre-loaded context) unless explicitly requested
+    if request.memory_type != "system":
+        memories = [m for m in memories if m.memory_type != "system"]
+
     return {
         "count": len(memories),
         "memories": [
@@ -111,9 +115,7 @@ async def get_context_window(request: ContextWindowRequest):
         "session_id": request.session_id,
         "conversation_history": context["conversation_history"],
         "relevant_memories": context["relevant_memories"],
-        "global_memories": [
-            {"content": m.content, "type": m.memory_type} for m in global_memories
-        ],
+        "global_memories": [{"content": m.content, "type": m.memory_type} for m in global_memories],
     }
 
 

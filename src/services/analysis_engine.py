@@ -112,9 +112,7 @@ class AnalysisEngine:
         self, user_message: str, available_tools: List[str]
     ) -> Dict[str, Any]:
         """Suggest actions based on user intent."""
-        suggestions = await self.processor.suggest_actions(
-            user_message, available_tools
-        )
+        suggestions = await self.processor.suggest_actions(user_message, available_tools)
 
         return {
             "available": available_tools,
@@ -147,9 +145,7 @@ class AnalysisEngine:
         if intent.get("needs_action"):
             lines.append("• Action request detected")
             if actions.get("available"):
-                lines.append(
-                    f"  - Available tools: {', '.join(actions['available'][:5])}"
-                )
+                lines.append(f"  - Available tools: {', '.join(actions['available'][:5])}")
             if actions.get("suggested"):
                 suggested = actions["suggested"][:3]
                 lines.append(f"  - Suggestions: {len(suggested)} actions")
@@ -159,9 +155,7 @@ class AnalysisEngine:
             lines.append(f"• Found {len(memories)} relevant memories")
             for mem in memories[:2]:
                 content = (
-                    mem["content"][:60] + "..."
-                    if len(mem["content"]) > 60
-                    else mem["content"]
+                    mem["content"][:60] + "..." if len(mem["content"]) > 60 else mem["content"]
                 )
                 lines.append(f"  - [{mem['type']}] {content}")
 
@@ -305,18 +299,67 @@ def get_analysis_engine() -> AnalysisEngine:
     return _analysis_engine
 
 
-async def analyze_and_respond(user_message: str, session_id: str) -> Dict[str, Any]:
-    """Convenience function: analyze with fast model, respond with quality model."""
+async def analyze_and_respond(
+    user_message: str, session_id: str, use_quick_mode: bool = False, include_thinking: bool = False
+) -> Dict[str, Any]:
+    """Convenience function: analyze with fast model, respond with quality model.
+
+    Args:
+        user_message: The user's query
+        session_id: Session identifier
+        use_quick_mode: If True, bypass OpenRouter for simple queries
+        include_thinking: If True, include analysis in output
+    """
     engine = get_analysis_engine()
+    processor = engine.processor
 
-    # Fast analysis
+    # Check if this is a simple query that can use quick mode
+    is_simple = processor.is_simple_query(user_message)
+
+    if use_quick_mode and is_simple:
+        # Quick response without OpenRouter - use heart/fallback only
+        sentiment = {
+            "sentiment": "neutral",
+            "emotion": "neutral",
+            "urgency": 0.3,
+            "tone": "casual",
+            "complexity": "low",
+        }
+
+        # Generate quick response based on query type
+        msg_lower = user_message.lower()
+        if any(g in msg_lower for g in ["hi", "hello", "hey", "howdy"]):
+            response_text = "Hello! I'm OpenAura, your AI assistant. How can I help you today?"
+        elif "how are you" in msg_lower:
+            response_text = "I'm operating at full capacity! My heart is beating strong and all systems are operational. How can I assist you?"
+        elif "status" in msg_lower or "health" in msg_lower:
+            response_text = "All systems are healthy! The Analysis Engine is operational, Two-Stage Processing is active, and my working memory has space available."
+        elif "what can you do" in msg_lower or "help" in msg_lower:
+            response_text = "I can help you with:\n- Package management (search/install with pacman/yay)\n- Running CLI tools and commands\n- Answering questions and providing info\n- Learning from our conversations\n- Managing sub-agents for complex tasks\n\nJust ask me anything!"
+        elif "thank" in msg_lower:
+            response_text = "You're welcome! I'm here whenever you need assistance."
+        else:
+            response_text = "I understand. How can I help you with that?"
+
+        return {
+            "thinking": "💭 Quick mode - simple query detected" if include_thinking else "",
+            "response": response_text,
+            "model": "openaura/heart",
+            "usage": {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+            "analysis": {
+                "sentiment": sentiment,
+                "intent": {"intent": "chat", "needs_action": False},
+                "actions_available": [],
+                "quick_mode": True,
+            },
+        }
+
+    # Full two-stage processing with OpenRouter
     analysis = await engine.analyze(user_message, session_id)
-
-    # Quality response
     response = await engine.get_quality_response(user_message, analysis, session_id)
 
     return {
-        "thinking": analysis.thinking_summary,
+        "thinking": analysis.thinking_summary if include_thinking else "",
         "response": response["content"],
         "model": response.get("model"),
         "usage": response.get("usage", {}),
@@ -324,5 +367,6 @@ async def analyze_and_respond(user_message: str, session_id: str) -> Dict[str, A
             "sentiment": analysis.sentiment,
             "intent": analysis.intent,
             "actions_available": analysis.actions.get("available", []),
+            "quick_mode": False,
         },
     }

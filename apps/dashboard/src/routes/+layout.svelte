@@ -1,15 +1,16 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/stores';
-	import { Brain, Heart, Bot, Terminal, LayoutDashboard, RefreshCw } from 'lucide-svelte';
+	import { Brain, Heart, Bot, Terminal, LayoutDashboard, RefreshCw, Settings } from 'lucide-svelte';
 	import { memoryStore, heartStore, agentsStore, sessionsStore, createAutoRefresh } from '$lib/stores';
 
 	const navItems = [
 		{ path: '/', label: 'Overview', icon: LayoutDashboard },
 		{ path: '/memory', label: 'Memory', icon: Brain },
-		{ path: '/agents', label: 'Agents', icon: Bot },
 		{ path: '/sessions', label: 'Sessions', icon: Terminal },
-		{ path: '/heart', label: 'Heart', icon: Heart }
+		{ path: '/agents', label: 'Agents', icon: Bot },
+		{ path: '/heart', label: 'Heart', icon: Heart },
+		{ path: '/config', label: 'Settings', icon: Settings }
 	];
 
 	// Auto-refresh all stores every 5 seconds

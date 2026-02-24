@@ -34,6 +34,10 @@ class OpenAIChatRequest(BaseModel):
     temperature: Optional[float] = 0.7
     max_tokens: Optional[int] = None
     stream: bool = False
+    # Control whether to show analysis/thinking in output
+    show_thinking: bool = False
+    # Force quick mode (bypass OpenRouter for simple queries)
+    quick_mode: Optional[bool] = None
 
 
 class OpenAIDelta(BaseModel):
@@ -113,6 +117,18 @@ async def list_openai_models() -> OpenAIModelsResponse:
             ),
         ]
     )
+
+
+@router.get("/config/status")
+async def get_config_status():
+    """Get current configuration status."""
+    api_key = os.getenv("OPENROUTER_API_KEY", "")
+    has_valid_key = api_key and api_key != "your_openrouter_api_key_here" and len(api_key) > 20
+
+    return {
+        "has_api_key": has_valid_key,
+        "api_key_preview": api_key[:10] + "..." if has_valid_key else None,
+    }
 
 
 @router.post("/config/api-key")
@@ -227,31 +243,37 @@ Please paste your API key (it should start with `sk-or-v1-`) to continue."""
         # Generate session ID
         session_id = f"session_{os.urandom(4).hex()}"
 
+        # Determine quick mode: either explicitly set or auto-detect for simple queries
+        use_quick_mode = (
+            request.quick_mode if request.quick_mode is not None else True
+        )  # Default to quick mode
+
         # Two-stage processing: fast analysis + quality response
-        result = await analyze_and_respond(user_message, session_id)
+        result = await analyze_and_respond(
+            user_message,
+            session_id,
+            use_quick_mode=use_quick_mode,
+            include_thinking=request.show_thinking,
+        )
 
-        # Build choices array with thinking visible as first assistant message
-        choices = []
+        # Build response content
+        if request.show_thinking and result["thinking"]:
+            full_content = f"{result['thinking']}\n\n---\n\n{result['response']}"
+        else:
+            full_content = result["response"]
 
-        # First choice: thinking + response (for non-streaming)
-        thinking_content = result["thinking"]
-        response_content = result["response"]
-
-        # Combine thinking and response
-        full_content = f"{thinking_content}\n\n---\n\n{response_content}"
-
-        choices.append(
+        choices = [
             OpenAIChoice(
                 index=0,
                 message=OpenAIMessage(role="assistant", content=full_content),
                 finish_reason="stop",
             )
-        )
+        ]
 
         return OpenAIChatResponse(
             id=f"chatcmpl-{uuid.uuid4().hex[:8]}",
             created=int(datetime.utcnow().timestamp()),
-            model=request.model,
+            model=result.get("model", request.model),
             choices=choices,
             usage=OpenAIUsage(
                 prompt_tokens=result.get("usage", {}).get("prompt_tokens", 0),
