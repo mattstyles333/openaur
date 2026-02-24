@@ -182,7 +182,7 @@ async def openai_chat(request: OpenAIChatRequest) -> OpenAIChatResponse:
                                 index=0,
                                 message=OpenAIMessage(
                                     role="assistant",
-                                    content="✅ **API Key saved successfully!**\n\nYour OpenRouter API key has been configured. You can now start chatting with openaur.\n\nTry asking me something!",
+                                    content="✅ API key saved! You can now start chatting.",
                                 ),
                                 finish_reason="stop",
                             )
