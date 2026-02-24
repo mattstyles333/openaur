@@ -34,24 +34,30 @@ Think of it as giving your favorite LLM a long-term memory and a bash shell, wra
 
 ## Why OpenAura?
 
-### The Problem with Chatbots
+### The Problem with Today's AI Assistants
 
-You know the drill. You spend 20 minutes explaining your nginx setup to ChatGPT, it gives you great advice, you fix the issue. A week later, same problem happens. You open a new chat and... **start from zero.** It doesn't remember your config, your architecture, or that conversation.
+You know the drill. You spend 20 minutes explaining your nginx setup to Claude or ChatGPT, it gives you great advice, you fix the issue. A week later, same problem happens. You open a new chat and... **start from zero.** It doesn't remember your config, your architecture, or that conversation.
 
 **OpenAura solves this.** It persists context across sessions, so your AI actually learns about you and your systems over time.
 
-### When to Use OpenAura vs Others
+### Compared to OpenClaw
 
-| Use Case | Best Tool | Why |
-|----------|-----------|-----|
-| General knowledge questions | Latest LLMs (ChatGPT, Claude, etc.) | Optimized for broad reasoning |
-| Your specific system setup | **OpenAura** | Remembers your configs, packages, preferences |
-| Installing/configuring Arch packages | **OpenAura** | Native AUR integration, can actually run commands |
-| Complex reasoning tasks | Latest LLMs | State-of-the-art models |
-| Long-running automation | **OpenAura** | Tmux-based async execution |
-| Code review across sessions | **OpenAura** | Remembers your codebase context |
+[OpenClaw](https://github.com/mezoistvan/OpenClaude) pioneered local-first AI agents—but OpenAura extends that vision specifically for **Linux system integration and memory persistence**.
 
-**Bottom line:** OpenAura isn't trying to replace those tools. It's for when you want an AI that knows *your* systems and can *actually do things* for you.
+| Capability | OpenClaw | OpenAura |
+|------------|----------|----------|
+| **Philosophy** | Local-first AI agent | Personal AI with memory + Linux tools |
+| **Cognitive Memory** | Limited session context | Persistent SQLite-backed memory |
+| **System Access** | Basic file operations | Full Arch Linux + AUR package management |
+| **Terminal Integration** | Standard CLI | Tmux-based async execution |
+| **Emotional Adaptation** | No | Sentiment-aware empathy engine |
+| **Package Management** | No | Native AUR integration via yay |
+| **Action Discovery** | Manual tool registration | Auto-crawl CLI documentation |
+| **Sandboxing** | Local execution | Docker container isolation |
+
+**Choose OpenClaw if:** You want a lightweight, general-purpose local AI agent.
+
+**Choose OpenAura if:** You want an AI that knows your Arch Linux system, remembers everything about your setup, and can actually manage packages and run commands for you.
 
 ---
 
