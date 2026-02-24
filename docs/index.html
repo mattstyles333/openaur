@@ -633,6 +633,27 @@ curl -X POST http://localhost:8000/actions/crawl \
   -d '{"binary": "git"}'</pre>
             </div>
             
+            <p><strong>Recommended CLI tools to register:</strong></p>
+            
+            <div class="code-block">
+                <pre><span class="code-comment"># Cloud & Infrastructure</span>
+make crawl BINARY=aws          <span class="code-comment"># AWS CLI</span>
+make crawl BINARY=kubectl      <span class="code-comment"># Kubernetes</span>
+make crawl BINARY=terraform    <span class="code-comment"># Infrastructure as code</span>
+
+<span class="code-comment"># Development Tools</span>
+make crawl BINARY=gh           <span class="code-comment"># GitHub CLI</span>
+make crawl BINARY=opencode     <span class="code-comment"># AI coding agent</span>
+make crawl BINARY=playwright   <span class="code-comment"># Browser automation</span>
+
+<span class="code-comment"># Security & Secrets</span>
+make crawl BINARY=op           <span class="code-comment"># 1Password CLI</span>
+
+<span class="code-comment"># System Tools</span>
+make crawl BINARY=yay          <span class="code-comment"># AUR helper</span>
+make crawl BINARY=systemctl    <span class="code-comment"># systemd services</span></pre>
+            </div>
+            
             <h3>Listing Registered Actions</h3>
             <div class="code-block">
                 <pre>curl http://localhost:8000/actions/
