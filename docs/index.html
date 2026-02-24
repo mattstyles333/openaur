@@ -427,7 +427,25 @@
                 <li>OpenRouter API key (get one free at <a href="https://openrouter.ai/keys">openrouter.ai</a>)</li>
             </ul>
             
-            <h3>Step-by-Step Installation</h3>
+            <h3>Automated Installation (Recommended)</h3>
+            <p>The easiest way to install OpenAura is with our one-line installer:</p>
+            
+            <div class="code-block">
+                <pre>curl -fsSL https://raw.githubusercontent.com/mattstyles333/openaur/master/install.sh | bash</pre>
+            </div>
+            
+            <p>The installer will:</p>
+            <ul>
+                <li>Check prerequisites (Docker, Docker Compose)</li>
+                <li>Prompt for your OpenRouter API key</li>
+                <li>Clone the repository</li>
+                <li>Build Docker images</li>
+                <li>Start all services</li>
+                <li>Verify the installation</li>
+            </ul>
+            
+            <h3>Manual Installation</h3>
+            <p>If you prefer to install manually:</p>
             
             <div class="code-block">
                 <pre><span class="code-comment"># 1. Clone the repository</span>

@@ -9,8 +9,16 @@
 [![Docker](https://img.shields.io/badge/docker-2496ED.svg?logo=docker&logoColor=white)](https://docker.com/)
 
 ```bash
-# One-line setup
-git clone https://github.com/mattstyles333/openaur.git && cd openaur && cp .env.example .env && docker-compose up -d
+# One-line installer
+curl -fsSL https://raw.githubusercontent.com/mattstyles333/openaur/master/install.sh | bash
+```
+
+Or manually:
+```bash
+git clone https://github.com/mattstyles333/openaur.git && cd openaur
+cp .env.example .env
+# Edit .env and add your OPENROUTER_API_KEY
+docker-compose up -d
 ```
 
 ---
@@ -129,7 +137,18 @@ Everything runs in containers:
 - Docker & Docker Compose
 - OpenRouter API key ([free at openrouter.ai](https://openrouter.ai/keys))
 
-### 30-Second Setup
+### 30-Second Setup (Automated)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mattstyles333/openaur/master/install.sh | bash
+```
+
+The installer will:
+- Check prerequisites (Docker, Docker Compose)
+- Ask for your OpenRouter API key
+- Clone the repository
+- Build and start containers
+- Verify everything is working
 
 ```bash
 # 1. Clone
