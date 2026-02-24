@@ -77,63 +77,35 @@
 		</div>
 	</div>
 
-	<!-- Memory Architecture Stats -->
+	<!-- Memory Stats -->
 	{#if $memoryStore.stats}
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-			<!-- Short-term (Working Memory) -->
-			<div class="bg-card-bg rounded-lg p-6 border border-border-subtle glow-border">
-				<div class="flex items-center gap-3 mb-4">
+		<div class="bg-card-bg rounded-xl p-6 border border-border-subtle mb-8">
+			<div class="flex items-center justify-between mb-4">
+				<div class="flex items-center gap-3">
 					<div class="p-2 bg-neon-cyan/10 rounded-lg">
 						<Brain class="text-neon-cyan" size={20} />
 					</div>
 					<div>
-						<p class="text-text-primary font-semibold">Working Memory</p>
-						<p class="text-text-secondary text-xs">Hot cache - instant access</p>
+						<p class="text-text-primary font-semibold">Total Memories</p>
+						<p class="text-text-secondary text-xs">Stored in SQLite with HMD2 architecture</p>
 					</div>
 				</div>
-				<div class="flex items-end justify-between mb-2">
-					<p class="text-3xl font-bold text-neon-cyan">{$memoryStore.stats.short_term || 0}</p>
-					<p class="text-text-secondary text-sm">/ {$memoryStore.stats.short_term_max || 30}</p>
-				</div>
-				<div class="h-2 bg-deep-dark rounded-full overflow-hidden">
-					<div 
-						class="h-full bg-neon-cyan rounded-full transition-all duration-500"
-						style="width: {(($memoryStore.stats.short_term || 0) / ($memoryStore.stats.short_term_max || 30)) * 100}%"
-					></div>
+				<div class="text-right">
+					<p class="text-3xl font-bold text-neon-cyan">{$memoryStore.stats.total_memories}</p>
+					<p class="text-xs text-text-secondary">Backend: {$memoryStore.stats.backend || 'sqlite'}</p>
 				</div>
 			</div>
 			
-			<!-- Long-term (Persistent Storage) -->
-			<div class="bg-card-bg rounded-lg p-6 border border-border-subtle">
-				<div class="flex items-center gap-3 mb-4">
-					<div class="p-2 bg-neon-purple/10 rounded-lg">
-						<Brain class="text-neon-purple" size={20} />
-					</div>
-					<div>
-						<p class="text-text-primary font-semibold">Long-term Storage</p>
-						<p class="text-text-secondary text-xs">SQLite database - persistent</p>
-					</div>
+			{#if Object.keys($memoryStore.stats.by_type || {}).length > 0}
+				<div class="flex flex-wrap gap-2 mt-4">
+					{#each Object.entries($memoryStore.stats.by_type) as [type, count]}
+						<div class="px-3 py-1.5 rounded-full bg-deep-dark border border-border-subtle text-sm">
+							<span class="text-text-secondary">{type}:</span>
+							<span class="text-neon-cyan font-medium ml-1">{count}</span>
+						</div>
+					{/each}
 				</div>
-				<div class="flex items-end justify-between mb-2">
-					<p class="text-3xl font-bold text-neon-purple">{$memoryStore.stats.long_term || 0}</p>
-					<p class="text-text-secondary text-sm">memories</p>
-				</div>
-				<div class="h-2 bg-deep-dark rounded-full overflow-hidden">
-					<div class="h-full bg-neon-purple/50 rounded-full"></div>
-				</div>
-			</div>
-		</div>
-	{/if}
-
-	<!-- Memory Types -->
-	{#if $memoryStore.stats && Object.keys($memoryStore.stats.by_type).length > 0}
-		<div class="mb-8 flex flex-wrap gap-2">
-			{#each Object.entries($memoryStore.stats.by_type) as [type, count]}
-				<div class="px-3 py-1.5 rounded-full bg-card-bg border border-border-subtle text-sm">
-					<span class="text-text-secondary">{type}:</span>
-					<span class="text-neon-cyan font-medium ml-1">{count}</span>
-				</div>
-			{/each}
+			{/if}
 		</div>
 	{/if}
 

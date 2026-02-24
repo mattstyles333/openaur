@@ -42,11 +42,11 @@
 				{/if}
 			</div>
 			<div class="space-y-1">
-				<p class="text-text-secondary text-sm">Working Memory</p>
+				<p class="text-text-secondary text-sm">Total Memories</p>
 				{#if $memoryStore.stats}
-					<p class="text-2xl font-bold text-text-primary">{$memoryStore.stats.short_term || 0}/{$memoryStore.stats.short_term_max || 30}</p>
+					<p class="text-2xl font-bold text-text-primary">{$memoryStore.stats.total_memories}</p>
 					<p class="text-xs text-text-secondary">
-						{$memoryStore.stats.long_term || 0} long-term
+						Backend: {$memoryStore.stats.backend || 'sqlite'}
 					</p>
 				{:else}
 					<p class="text-2xl font-bold text-text-primary">-</p>
@@ -57,7 +57,7 @@
 				<div class="mt-4 h-2 bg-deep-dark rounded-full overflow-hidden">
 					<div 
 						class="h-full bg-gradient-to-r from-neon-cyan to-neon-purple rounded-full transition-all duration-500"
-						style="width: {(($memoryStore.stats.short_term || 0) / ($memoryStore.stats.short_term_max || 30)) * 100}%"
+						style="width: {($memoryStore.stats.utilization * 100).toFixed(1)}%"
 					></div>
 				</div>
 			{/if}
