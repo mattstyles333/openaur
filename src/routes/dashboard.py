@@ -1,6 +1,6 @@
 """Dashboard routes - System overview and monitoring.
 
-Provides a unified view of OpenAura system state.
+Provides a unified view of openaur system state.
 """
 
 from fastapi import APIRouter

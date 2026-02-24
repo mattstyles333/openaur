@@ -28,14 +28,14 @@ async def lifespan(app: FastAPI):
     await init_db()
     app.state.gateway = OpenRouterGateway()
     app.state.package_manager = PackageManager()
-    print("🚀 OpenAura initialized")
+    print("🚀 openaur initialized")
     yield
     # Shutdown
-    print("👋 OpenAura shutting down")
+    print("👋 openaur shutting down")
 
 
 app = FastAPI(
-    title="OpenAura",
+    title="openaur",
     description="Personal AI Assistant with Arch Linux Action Registry",
     version="1.0.0",
     lifespan=lifespan,
@@ -77,7 +77,7 @@ async def health_check():
 async def root():
     """Root endpoint."""
     return {
-        "message": "Welcome to OpenAura",
+        "message": "Welcome to openaur",
         "version": "1.0.0",
         "endpoints": [
             "/v1/chat/completions - OpenAI-compatible API",

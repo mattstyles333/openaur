@@ -86,7 +86,7 @@ def has_valid_api_key() -> bool:
 
 
 def ensure_context_loaded():
-    """Ensure OpenAura context is preloaded in memory."""
+    """Ensure openaur context is preloaded in memory."""
     global _context_preloaded
     if not _context_preloaded:
         count = preload_openaura_context()
@@ -151,25 +151,62 @@ async def openai_chat(request: OpenAIChatRequest) -> OpenAIChatResponse:
         if not user_message:
             raise HTTPException(status_code=400, detail="No user message found")
 
-        # Check if API key is configured
+        # Check if user is providing an API key
         if not has_valid_api_key():
+            # Check if the message contains an API key (sk-or-v1-...)
+            import re
+
+            msg_stripped = user_message.strip()
+
+            # Try to extract API key from message (handles pasted keys with extra text)
+            api_key_match = re.search(r"(sk-or-v1-[a-f0-9]+)", msg_stripped)
+
+            if api_key_match:
+                api_key = api_key_match.group(1)
+                if len(api_key) > 50:
+                    # Save the API key
+                    os.environ["OPENROUTER_API_KEY"] = api_key
+                    from src.services.two_stage_processor import get_processor
+
+                    processor = get_processor()
+                    processor.api_key = api_key
+                    processor.headers["Authorization"] = f"Bearer {api_key}"
+                    processor.has_valid_api_key = True
+
+                    return OpenAIChatResponse(
+                        id=f"chatcmpl-{uuid.uuid4().hex[:8]}",
+                        created=int(datetime.utcnow().timestamp()),
+                        model=request.model,
+                        choices=[
+                            OpenAIChoice(
+                                index=0,
+                                message=OpenAIMessage(
+                                    role="assistant",
+                                    content="✅ **API Key saved successfully!**\n\nYour OpenRouter API key has been configured. You can now start chatting with openaur.\n\nTry asking me something!",
+                                ),
+                                finish_reason="stop",
+                            )
+                        ],
+                        usage=OpenAIUsage(),
+                    )
+
             # Return helpful message asking for API key
             setup_message = """⚠️ **OpenRouter API Key Required**
 
-To use OpenAura's AI features, you need to configure your OpenRouter API key.
+To use openaur's AI features, you need to configure your OpenRouter API key.
 
 **How to get an API key:**
 1. Visit https://openrouter.ai/keys
 2. Create a free account
 3. Generate an API key
-4. Return here and enter it
+4. **Paste it directly into chat**
 
 **Your API key will be used for:**
 - Fast sentiment/intent analysis
 - Quality AI responses
 - Memory processing
 
-Please enter your API key to continue."""
+Please paste your API key (it should start with `sk-or-v1-`) to continue."""
 
             choices = [
                 OpenAIChoice(

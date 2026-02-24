@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentation - OpenAura</title>
-    <meta name="description" content="Complete documentation for OpenAura - AI assistant with Arch Linux integration">
+    <title>Documentation - openaur</title>
+    <meta name="description" content="Complete documentation for openaur - AI assistant with Arch Linux integration">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -348,7 +348,7 @@
         <div class="nav-container">
             <a href="../" class="logo">
                 <div class="logo-icon">🐧</div>
-                OpenAura
+                openaur
             </a>
             <ul class="nav-links">
                 <li><a href="../">Home</a></li>
@@ -415,10 +415,10 @@
         <!-- Main Content -->
         <main class="main-content">
             <h1>Documentation</h1>
-            <p>Welcome to the OpenAura documentation. Here you'll find everything you need to get started, from installation to advanced usage.</p>
+            <p>Welcome to the openaur documentation. Here you'll find everything you need to get started, from installation to advanced usage.</p>
 
             <h2 id="installation">Installation</h2>
-            <p>OpenAura runs in Docker containers. This is the recommended and only supported installation method.</p>
+            <p>openaur runs in Docker containers. This is the recommended and only supported installation method.</p>
             
             <h3>Prerequisites</h3>
             <ul>
@@ -428,7 +428,7 @@
             </ul>
             
             <h3>Automated Installation (Recommended)</h3>
-            <p>The easiest way to install OpenAura is with our one-line installer:</p>
+            <p>The easiest way to install openaur is with our one-line installer:</p>
             
             <div class="code-block">
                 <pre>curl -fsSL https://raw.githubusercontent.com/mattstyles333/openaur/master/install.sh | bash</pre>
@@ -503,13 +503,13 @@ make test
             <h2 id="quickstart">Quick Start</h2>
             
             <h3>1. Register CLI Tools</h3>
-            <p>OpenAura can learn about your CLI tools and their documentation:</p>
+            <p>openaur can learn about your CLI tools and their documentation:</p>
             
             <div class="code-block">
                 <pre><span class="code-comment"># Crawl git's documentation</span>
 make crawl BINARY=git
 
-<span class="code-comment"># Now OpenAura knows every git command</span>
+<span class="code-comment"># Now openaur knows every git command</span>
 make chat MSG="How do I undo my last 3 commits safely?"</pre>
             </div>
             
@@ -534,7 +534,7 @@ openaur chat</pre>
             </div>
 
             <h2 id="cognitive-memory">Cognitive Memory</h2>
-            <p>OpenAura uses OpenMemory to persist context across sessions. Unlike other AI assistants that forget everything when you close the tab, OpenAura remembers:</p>
+            <p>openaur uses OpenMemory to persist context across sessions. Unlike other AI assistants that forget everything when you close the tab, openaur remembers:</p>
             
             <ul>
                 <li><strong>Conversations</strong> - Context from previous chats</li>
@@ -566,10 +566,10 @@ curl -X POST http://localhost:8000/memory/add \
             </div>
 
             <h2 id="empathy-engine">Empathy Engine</h2>
-            <p>OpenAura analyzes your sentiment and adapts its tone accordingly. This makes interactions feel more natural and supportive.</p>
+            <p>openaur analyzes your sentiment and adapts its tone accordingly. This makes interactions feel more natural and supportive.</p>
             
             <h3>How It Works</h3>
-            <p>When you send a message, OpenAura:</p>
+            <p>When you send a message, openaur:</p>
             <ol>
                 <li>Analyzes sentiment (positive, negative, neutral)</li>
                 <li>Detects emotions (frustrated, excited, confused, etc.)</li>
@@ -582,7 +582,7 @@ curl -X POST http://localhost:8000/memory/add \
                 <thead>
                     <tr>
                         <th>Your State</th>
-                        <th>OpenAura Response Style</th>
+                        <th>openaur Response Style</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -612,7 +612,7 @@ curl -X POST http://localhost:8000/memory/add \
             </div>
 
             <h2 id="action-registry">Action Registry</h2>
-            <p>The Action Registry is where OpenAura stores information about CLI tools. When you "crawl" a binary, OpenAura:</p>
+            <p>The Action Registry is where openaur stores information about CLI tools. When you "crawl" a binary, openaur:</p>
             <ol>
                 <li>Reads the man page</li>
                 <li>Runs <code>--help</code> and <code>-h</code></li>
@@ -697,7 +697,7 @@ make crawl BINARY=systemctl    <span class="code-comment"># systemd services</sp
             </div>
 
             <h2 id="chat-api">Chat API</h2>
-            <p>OpenAura provides both OpenAI-compatible endpoints and enhanced chat endpoints.</p>
+            <p>openaur provides both OpenAI-compatible endpoints and enhanced chat endpoints.</p>
             
             <h3>OpenAI-Compatible</h3>
             <div class="code-block">
@@ -848,7 +848,7 @@ make crawl BINARY=systemctl    <span class="code-comment"># systemd services</sp
 
             <h2 id="cli-server">CLI: Server Commands</h2>
             <div class="code-block">
-                <pre><span class="code-comment"># Start OpenAura containers</span>
+                <pre><span class="code-comment"># Start openaur containers</span>
 openaur server start
 
 <span class="code-comment"># Stop containers</span>
@@ -895,11 +895,11 @@ openaur actions show docker</pre>
             </div>
 
             <h2 id="architecture">Architecture</h2>
-            <p>OpenAura follows a modular microservices architecture built on Arch Linux.</p>
+            <p>openaur follows a modular microservices architecture built on Arch Linux.</p>
             
             <div class="arch-diagram">
 <pre>┌─────────────────────────────────────────────────────────────────┐
-│                         OpenAura                                │
+│                         openaur                                │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │   ┌──────────┐    ┌───────────┐    ┌──────────────────────┐   │
@@ -964,7 +964,7 @@ make reset-db</pre>
             </ul>
 
             <h2 id="acknowledgments">Acknowledgments</h2>
-            <p><strong>OpenAura stands on the shoulders of these incredible open source projects:</strong></p>
+            <p><strong>openaur stands on the shoulders of these incredible open source projects:</strong></p>
             
             <h4>Core Stack</h4>
             <ul>

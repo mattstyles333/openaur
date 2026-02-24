@@ -11,7 +11,7 @@ analysis_engine = get_analysis_engine()
 @router.get("/")
 async def heart() -> Dict[str, Any]:
     """
-    The Heart of OpenAura - combines system health and emotional state.
+    The Heart of openaur - combines system health and emotional state.
 
     Uses fast model (gpt-oss-20b:nitro) for sentiment analysis.
     """
@@ -38,7 +38,7 @@ async def heart() -> Dict[str, Any]:
                 "status": "beating",
             },
         },
-        "message": "OpenAura's heart is beating with two-stage intelligence",
+        "message": "openaur's heart is beating with two-stage intelligence",
         "pulse": "✓✓",
     }
 

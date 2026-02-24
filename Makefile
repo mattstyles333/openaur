@@ -1,4 +1,4 @@
-# OpenAura - Personal AI Assistant
+# openaur - Personal AI Assistant
 # Arch Linux + FastAPI + OpenRouter + OpenMemory
 
 .PHONY: build run stop clean test crawl

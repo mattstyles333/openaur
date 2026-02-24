@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-OpenAura CLI - Host wrapper
+openaur CLI - Host wrapper
 This script runs the Typer CLI directly on the host
 """
 import sys
@@ -20,7 +20,7 @@ def check_server():
         return False
 
 if not check_server():
-    print("Error: OpenAura server is not running")
+    print("Error: openaur server is not running")
     print("Start it with: cd {} && docker-compose up -d".format(SCRIPT_DIR))
     sys.exit(1)
 

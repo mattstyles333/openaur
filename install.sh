@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# OpenAura Installer
-# One-command setup for OpenAura - Personal AI Assistant
+# openaur Installer
+# One-command setup for openaur - Personal AI Assistant
 #
 
 set -e
@@ -50,15 +50,15 @@ echo ""
 
 # Check if running in existing directory
 if [ -f "docker-compose.yml" ]; then
-    echo -e "${YELLOW}⚠️  OpenAura appears to be already installed in this directory${NC}"
+    echo -e "${YELLOW}⚠️  openaur appears to be already installed in this directory${NC}"
     read -p "Do you want to update/reset instead? (y/N): " update_choice
     if [[ $update_choice =~ ^[Yy]$ ]]; then
         echo ""
-        echo -e "${BLUE}Updating OpenAura...${NC}"
+        echo -e "${BLUE}Updating openaur...${NC}"
         docker-compose pull
         docker-compose up -d
         echo ""
-        echo -e "${GREEN}✓ OpenAura updated!${NC}"
+        echo -e "${GREEN}✓ openaur updated!${NC}"
         echo ""
         echo "Test it: make test"
         echo "Or visit: http://localhost:8000"
@@ -71,7 +71,7 @@ fi
 
 # Get OpenRouter API Key
 echo -e "${BLUE}Configuration${NC}"
-echo "OpenAura needs an OpenRouter API key to access AI models."
+echo "openaur needs an OpenRouter API key to access AI models."
 echo "You can get a free key at: https://openrouter.ai/keys"
 echo ""
 
@@ -97,7 +97,7 @@ while true; do
 done
 
 echo ""
-echo -e "${BLUE}Installing OpenAura...${NC}"
+echo -e "${BLUE}Installing openaur...${NC}"
 echo ""
 
 # Clone repository
@@ -124,7 +124,7 @@ EOF
 echo "→ Building Docker images (this may take a few minutes)..."
 docker-compose build --quiet
 
-echo "→ Starting OpenAura..."
+echo "→ Starting openaur..."
 docker-compose up -d
 
 # Wait for health check
@@ -137,7 +137,7 @@ if curl -s http://localhost:8000/health > /dev/null 2>&1; then
     echo ""
     echo -e "${GREEN}╔════════════════════════════════════════════════════════╗${NC}"
     echo -e "${GREEN}║                                                        ║${NC}"
-    echo -e "${GREEN}║   ✓ OpenAura installed successfully!                  ║${NC}"
+    echo -e "${GREEN}║   ✓ openaur installed successfully!                  ║${NC}"
     echo -e "${GREEN}║                                                        ║${NC}"
     echo -e "${GREEN}╚════════════════════════════════════════════════════════╝${NC}"
     echo ""

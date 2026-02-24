@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-OpenAura CLI - A Typer-based command-line interface for OpenAura
+openaur CLI - A Typer-based command-line interface for openaur
 """
 import json
 import os
@@ -26,7 +26,7 @@ from rich.columns import Columns
 
 app = typer.Typer(
     name="openaur",
-    help="OpenAura CLI - Personal AI Assistant",
+    help="openaur CLI - Personal AI Assistant",
     add_completion=False,
 )
 console = Console()
@@ -37,7 +37,7 @@ CONTAINER_NAME = "openaura"
 
 
 def print_banner():
-    """Print the OpenAura banner."""
+    """Print the openaur banner."""
     banner = """
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
@@ -55,7 +55,7 @@ def print_banner():
 
 
 def check_container() -> bool:
-    """Check if the OpenAura container is running."""
+    """Check if the openaur container is running."""
     # Check if we're running inside a container (Docker environment)
     if os.path.exists("/.dockerenv") or os.environ.get("DOCKER_CONTAINER", False):
         # Running inside container, assume we're good
@@ -75,7 +75,7 @@ def check_container() -> bool:
 
 
 def make_request(method: str, endpoint: str, **kwargs) -> dict:
-    """Make an HTTP request to the OpenAura API."""
+    """Make an HTTP request to the openaur API."""
     url = f"{BASE_URL}{endpoint}"
     try:
         with httpx.Client(timeout=30.0) as client:
@@ -83,7 +83,7 @@ def make_request(method: str, endpoint: str, **kwargs) -> dict:
             response.raise_for_status()
             return response.json()
     except httpx.ConnectError:
-        console.print("[red]Error: Cannot connect to OpenAura. Is the server running?[/red]")
+        console.print("[red]Error: Cannot connect to openaur. Is the server running?[/red]")
         console.print("[yellow]Run: openaur start[/yellow]")
         raise typer.Exit(1)
     except httpx.HTTPStatusError as e:
@@ -97,20 +97,20 @@ def make_request(method: str, endpoint: str, **kwargs) -> dict:
 
 
 # Server Commands
-server_app = typer.Typer(help="Manage the OpenAura server")
+server_app = typer.Typer(help="Manage the openaur server")
 app.add_typer(server_app, name="server")
 
 
 @server_app.command("start")
 def server_start():
-    """Start the OpenAura server with progress indicator."""
+    """Start the openaur server with progress indicator."""
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
         console=console,
         transient=True
     ) as progress:
-        task = progress.add_task("[cyan]Starting OpenAura containers...", total=None)
+        task = progress.add_task("[cyan]Starting openaur containers...", total=None)
         subprocess.run(
             ["docker-compose", "up", "-d"],
             cwd="/home/laptop/Documents/code/openaur",
@@ -120,7 +120,7 @@ def server_start():
     
     # Show nice success panel
     panel = Panel(
-        "[bold green]✓ OpenAura started successfully![/bold green]\n\n"
+        "[bold green]✓ openaur started successfully![/bold green]\n\n"
         "[blue]API:[/blue] http://localhost:8000\n"
         "[blue]WebUI:[/blue] http://localhost:3000",
         title="🚀 Server Ready",
@@ -131,14 +131,14 @@ def server_start():
 
 @server_app.command("stop")
 def server_stop():
-    """Stop the OpenAura server."""
+    """Stop the openaur server."""
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
         console=console,
         transient=True
     ) as progress:
-        task = progress.add_task("[yellow]Stopping OpenAura containers...", total=None)
+        task = progress.add_task("[yellow]Stopping openaur containers...", total=None)
         subprocess.run(
             ["docker-compose", "down"],
             cwd="/home/laptop/Documents/code/openaur",
@@ -146,19 +146,19 @@ def server_stop():
         )
         progress.update(task, completed=True)
     
-    console.print("[green]✓ OpenAura stopped[/green]")
+    console.print("[green]✓ openaur stopped[/green]")
 
 
 @server_app.command("restart")
 def server_restart():
-    """Restart the OpenAura server."""
+    """Restart the openaur server."""
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
         console=console,
         transient=True
     ) as progress:
-        task = progress.add_task("[cyan]Restarting OpenAura containers...", total=None)
+        task = progress.add_task("[cyan]Restarting openaur containers...", total=None)
         subprocess.run(
             ["docker-compose", "restart"],
             cwd="/home/laptop/Documents/code/openaur",
@@ -167,13 +167,13 @@ def server_restart():
         time.sleep(2)  # Give containers time to restart
         progress.update(task, completed=True)
     
-    console.print("[green]✓ OpenAura restarted[/green]")
+    console.print("[green]✓ openaur restarted[/green]")
 
 
 @server_app.command("status")
 def server_status():
-    """Show the OpenAura server status with rich formatting."""
-    console.print("[bold blue]OpenAura Server Status[/bold blue]")
+    """Show the openaur server status with rich formatting."""
+    console.print("[bold blue]openaur Server Status[/bold blue]")
     console.print(Rule(style="blue"))
     subprocess.run(["docker-compose", "ps"], cwd="/home/laptop/Documents/code/openaur")
 
@@ -183,7 +183,7 @@ def server_logs(
     follow: bool = typer.Option(False, "--follow", "-f", help="Follow log output"),
     tail: int = typer.Option(100, "--tail", "-n", help="Number of lines to show")
 ):
-    """Show OpenAura server logs."""
+    """Show openaur server logs."""
     cmd = ["docker-compose", "logs"]
     if follow:
         cmd.append("-f")
@@ -194,9 +194,9 @@ def server_logs(
 
 @server_app.command("shell")
 def server_shell():
-    """Open a shell in the OpenAura container."""
+    """Open a shell in the openaur container."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     subprocess.run(["docker", "exec", "-it", CONTAINER_NAME, "bash"])
 
@@ -204,9 +204,9 @@ def server_shell():
 # Heart Commands
 @app.command()
 def heart():
-    """Check the heart of OpenAura with beautiful visualization."""
+    """Check the heart of openaur with beautiful visualization."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     result = make_request("GET", "/heart/")
@@ -225,7 +225,7 @@ def heart():
     console.clear()
     
     # Create a nice display with layout
-    title = Text("OpenAura Heart Monitor", style="bold cyan")
+    title = Text("openaur Heart Monitor", style="bold cyan")
     title.align("center")
     
     # Health metrics
@@ -268,9 +268,9 @@ def chat(
     message: Optional[str] = typer.Argument(None, help="Message to send (omit for interactive mode)"),
     session_id: Optional[str] = typer.Option(None, "--session", "-s", help="Session ID for continuity")
 ):
-    """Chat with OpenAura with rich formatting."""
+    """Chat with openaur with rich formatting."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     if message:
@@ -281,7 +281,7 @@ def chat(
         
         with Progress(
             SpinnerColumn(),
-            TextColumn("[cyan]OpenAura is thinking..."),
+            TextColumn("[cyan]openaur is thinking..."),
             console=console,
             transient=True
         ) as progress:
@@ -291,7 +291,7 @@ def chat(
         # Format response nicely
         response_panel = Panel(
             result.get('response', ''),
-            title="[bold green]🤖 OpenAura[/bold green]",
+            title="[bold green]🤖 openaur[/bold green]",
             border_style="green",
             padding=(1, 2)
         )
@@ -308,7 +308,7 @@ def chat(
         # Interactive mode
         print_banner()
         console.print(Panel.fit(
-            "[bold cyan]OpenAura Chat[/bold cyan]\n"
+            "[bold cyan]openaur Chat[/bold cyan]\n"
             "Type [bold red]'exit'[/bold red] or [bold red]'quit'[/bold red] to leave",
             border_style="cyan"
         ))
@@ -339,7 +339,7 @@ def chat(
                 
                 response_panel = Panel(
                     result.get('response', ''),
-                    title="[bold cyan]🤖 OpenAura[/bold cyan]",
+                    title="[bold cyan]🤖 openaur[/bold cyan]",
                     border_style="cyan",
                     padding=(1, 2)
                 )
@@ -350,7 +350,7 @@ def chat(
 
 
 # Ingest Commands
-ingest_app = typer.Typer(help="Ingest data into OpenAura")
+ingest_app = typer.Typer(help="Ingest data into openaur")
 app.add_typer(ingest_app, name="ingest")
 
 
@@ -362,7 +362,7 @@ def ingest_action(
 ):
     """Ingest a CLI tool's documentation with progress spinner."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     with Progress(
@@ -404,9 +404,9 @@ def ingest_memory(
     source: str = typer.Option("manual", "--source", help="Memory source"),
     tags: Optional[List[str]] = typer.Option(None, "--tag", help="Tags for the memory")
 ):
-    """Ingest a memory into OpenAura."""
+    """Ingest a memory into openaur."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     with Progress(
@@ -435,7 +435,7 @@ def ingest_memory(
 def ingest_status():
     """Show ingestion status with rich formatting."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     result = make_request("GET", "/ingest/status")
@@ -474,7 +474,7 @@ def ingest_status():
 def actions():
     """List registered actions with rich table."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     result = make_request("GET", "/actions/")
@@ -529,7 +529,7 @@ def packages_search(
 ):
     """Search for packages with progress indicator."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     with Progress(
@@ -586,7 +586,7 @@ def packages_install(
 ):
     """Install a package with progress bar."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     # Show installing animation
@@ -626,7 +626,7 @@ def packages_install(
 def sessions():
     """List active sessions with rich formatting."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     result = make_request("GET", "/sessions/")
@@ -669,9 +669,9 @@ def sessions():
 # Test Command
 @app.command()
 def test():
-    """Test OpenAura endpoints with visual feedback."""
+    """Test openaur endpoints with visual feedback."""
     if not check_container():
-        console.print("[red]Error: OpenAura container is not running[/red]")
+        console.print("[red]Error: openaur container is not running[/red]")
         raise typer.Exit(1)
     
     print_banner()
@@ -718,10 +718,10 @@ def test():
 # Callback for banner on CLI startup
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context):
-    """OpenAura CLI with rich features."""
+    """openaur CLI with rich features."""
     if ctx.invoked_subcommand is None:
         print_banner()
-        console.print("\n[bold]Welcome to OpenAura![/bold]")
+        console.print("\n[bold]Welcome to openaur![/bold]")
         console.print("Run [cyan]openaur --help[/cyan] to see available commands\n")
 
 

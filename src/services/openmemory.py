@@ -1,4 +1,4 @@
-"""OpenMemory service - Cognitive layer for OpenAura.
+"""OpenMemory service - Cognitive layer for openaur.
 
 Provides memory storage and retrieval with embeddings for contextual awareness.
 """
@@ -35,7 +35,7 @@ class Memory:
 
 
 class OpenMemory:
-    """Cognitive memory layer for OpenAura.
+    """Cognitive memory layer for openaur.
 
     Manages short-term and long-term memory with retrieval capabilities.
     """

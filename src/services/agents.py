@@ -1,4 +1,4 @@
-"""Sub-agent service for OpenAura.
+"""Sub-agent service for openaur.
 
 Manages specialized AI agents that run in isolated tmux sessions.
 Each sub-agent has its own context, memory, and tool access.

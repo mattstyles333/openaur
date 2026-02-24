@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Preload OpenMemory with OpenAura design context.
+"""Preload OpenMemory with openaur design context.
 
 Run this to initialize the memory system with knowledge about
-how OpenAura works, its architecture, and capabilities.
+how openaur works, its architecture, and capabilities.
 """
 
 import sys
@@ -14,8 +14,8 @@ from src.services.openmemory import get_memory
 
 
 def preload_memory():
-    """Preload memory with OpenAura design context."""
-    print("🧠 Preloading OpenMemory with OpenAura context...")
+    """Preload memory with openaur design context."""
+    print("🧠 Preloading OpenMemory with openaur context...")
 
     # Preload from context_manager
     count = preload_openaura_context()
@@ -26,7 +26,7 @@ def preload_memory():
 
     detailed_context = [
         {
-            "content": """OpenAura Architecture:
+            "content": """openaur Architecture:
             - Base: Arch Linux Docker container with AUR support via yay
             - Gateway: FastAPI (port 8000) connecting to OpenRouter AI models
             - Memory: OpenMemory cognitive layer with SQLite persistence
@@ -134,7 +134,7 @@ def preload_memory():
             - Uses fast model for: sentiment, intent, action detection, memory retrieval
             - Shows thinking/analysis visible to user in OpenWebUI
             - Properly saves interactions with rich context
-            - Preloads memory with OpenAura design context
+            - Preloads memory with openaur design context
             - Adapts responses based on emotional state and urgency""",
             "type": "system",
             "importance": 0.95,
@@ -159,7 +159,7 @@ def preload_memory():
     print(f"   By type: {stats['by_type']}")
     print(f"   Utilization: {stats['utilization']:.1%}")
 
-    print("\n✅ OpenMemory preloaded with OpenAura context!")
+    print("\n✅ OpenMemory preloaded with openaur context!")
     return stats["total_memories"]
 
 

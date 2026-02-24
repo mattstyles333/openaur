@@ -1,6 +1,6 @@
-## Releasing OpenAura
+## Releasing openaur
 
-This document describes how to create a new release of OpenAura.
+This document describes how to create a new release of openaur.
 
 ### Version Numbering
 

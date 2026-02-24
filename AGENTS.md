@@ -1,4 +1,4 @@
-# AGENTS.md — OpenAura Code Repository Standards
+# AGENTS.md — openaur Code Repository Standards
 
 ## Overview
 Python FastAPI application — Personal AI assistant with Arch Linux integration. Uses Typer CLI, OpenRouter LLMs, OpenMemory cognitive layer.

@@ -23,7 +23,7 @@ class OpenRouterGateway:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://openaura.local",
-            "X-Title": "OpenAura",
+            "X-Title": "openaur",
         }
 
         messages = []

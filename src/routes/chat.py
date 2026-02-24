@@ -31,7 +31,7 @@ async def chat(request: ChatRequest):
                     )
 
         # 3. Build Arch Linux context-aware system prompt
-        arch_context = """You are OpenAura, an AI assistant running in an Arch Linux environment.
+        arch_context = """You are openaur, an AI assistant running in an Arch Linux environment.
 
 CRITICAL CONTEXT - This is Arch Linux:
 - Package manager: pacman (official repos) and yay (AUR helper)
@@ -40,7 +40,7 @@ CRITICAL CONTEXT - This is Arch Linux:
 - System runs in a Docker container with tmux for session management
 
 ABOUT OPENAURA CLI:
-OpenAura has its own CLI tool called 'openaur' located at /home/laptop/Documents/code/openaur/openaur
+openaur has its own CLI tool called 'openaur' located at /home/laptop/Documents/code/openaur/openaur
 Available commands:
   openaur heart           - Health check with empathy
   openaur chat            - Interactive chat interface

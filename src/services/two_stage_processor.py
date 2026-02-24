@@ -1,4 +1,4 @@
-"""Two-stage LLM processing for OpenAura.
+"""Two-stage LLM processing for openaur.
 
 Uses fast/cheap model (gpt-oss-20b:nitro) for preprocessing tasks:
 - Intent analysis
@@ -30,7 +30,7 @@ class TwoStageProcessor:
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://openaura.local",
-            "X-Title": "OpenAura",
+            "X-Title": "openaur",
         }
         # Check if API key is valid (not placeholder)
         self.has_valid_api_key = (
@@ -236,7 +236,7 @@ Return ONLY the JSON array."""
         messages = []
 
         # Add system context
-        context_str = f"""You are OpenAura, an AI assistant running in Arch Linux.
+        context_str = f"""You are openaur, an AI assistant running in Arch Linux.
 
 CONTEXT ANALYSIS:
 - Intent: {context.get("intent", {}).get("intent", "chat")}
@@ -247,7 +247,7 @@ CONTEXT ANALYSIS:
 
 SYSTEM INFO:
 - Arch Linux with pacman/yay
-- OpenAura CLI: /home/laptop/Documents/code/openaur/openaur
+- openaur CLI: /home/laptop/Documents/code/openaur/openaur
 - API: http://localhost:8000
 - WebUI: http://localhost:3000
 

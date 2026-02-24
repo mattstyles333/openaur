@@ -1,4 +1,4 @@
-"""Context manager for OpenAura chat system.
+"""Context manager for openaur chat system.
 
 Analyzes user queries, manages actions, retrieves memories, and builds context.
 """
@@ -331,8 +331,8 @@ class ContextBuilder:
 
     def build_system_prompt(self, context: Dict[str, Any]) -> str:
         """Build system prompt with full context."""
-        # Base OpenAura context
-        base = """You are OpenAura, an AI assistant running in an Arch Linux environment.
+        # Base openaur context
+        base = """You are openaur, an AI assistant running in an Arch Linux environment.
 
 CRITICAL CONTEXT - This is Arch Linux:
 - Package manager: pacman (official repos) and yay (AUR helper)
@@ -340,7 +340,7 @@ CRITICAL CONTEXT - This is Arch Linux:
 - User has passwordless sudo access
 
 ABOUT OPENAURA:
-OpenAura is a personal AI assistant with these capabilities:
+openaur is a personal AI assistant with these capabilities:
 - CLI tool: /home/laptop/Documents/code/openaur/openaur
   * heart: Health check with empathy
   * chat: Interactive chat
@@ -359,7 +359,7 @@ You have access to a memory system that:
 - Retrieves relevant context from previous conversations
 - Learns from user patterns
 
-When users ask about OpenAura capabilities, reference these features."""
+When users ask about openaur capabilities, reference these features."""
 
         # Add intent context
         intent = context.get("intent", {})
@@ -399,12 +399,12 @@ When users ask about OpenAura capabilities, reference these features."""
 
 
 def preload_openaura_context():
-    """Pre-load OpenMemory with OpenAura design context."""
+    """Pre-load OpenMemory with openaur design context."""
     memory = get_memory()
 
     context_items = [
         {
-            "content": "OpenAura is a personal AI assistant with Arch Linux, OpenRouter, and OpenMemory integration",
+            "content": "openaur is a personal AI assistant with Arch Linux, OpenRouter, and OpenMemory integration",
             "type": "system",
             "importance": 1.0,
             "tags": ["openaura", "overview"],
@@ -422,7 +422,7 @@ def preload_openaura_context():
             "tags": ["arch", "packages", "install"],
         },
         {
-            "content": "OpenAura has sub-agents: deep (research), quick (fast tasks), code-reviewer, test-runner, committer - each runs in isolated tmux sessions",
+            "content": "openaur has sub-agents: deep (research), quick (fast tasks), code-reviewer, test-runner, committer - each runs in isolated tmux sessions",
             "type": "system",
             "importance": 0.8,
             "tags": ["openaura", "agents", "sub-agents"],
@@ -440,7 +440,7 @@ def preload_openaura_context():
             "tags": ["openaura", "actions", "registry"],
         },
         {
-            "content": "OpenAura API runs on port 8000, Open WebUI on port 3000. Both are in docker-compose.",
+            "content": "openaur API runs on port 8000, Open WebUI on port 3000. Both are in docker-compose.",
             "type": "system",
             "importance": 0.7,
             "tags": ["openaura", "ports", "docker"],

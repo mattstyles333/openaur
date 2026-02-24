@@ -1,4 +1,4 @@
-"""Email ingestion service for OpenAura.
+"""Email ingestion service for openaur.
 
 Syncs emails from providers using offlineimap or gogcli.
 Stores emails for RAG and memory indexing.

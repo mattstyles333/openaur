@@ -1,7 +1,7 @@
-# OpenAura 🐧
+# openaur 🐧
 
 > **Give your AI a memory and a shell.**  
-> OpenAura makes AI assistants personal by adding persistent memory, Linux system access, and an empathy engine—all safely sandboxed in Docker.
+> openaur makes AI assistants personal by adding persistent memory, Linux system access, and an empathy engine—all safely sandboxed in Docker.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
@@ -23,11 +23,11 @@ docker-compose up -d
 
 ---
 
-## What is OpenAura?
+## What is openaur?
 
 LLMs are incredible at reasoning, but they have a major limitation: **they don't know you**. Every conversation starts from scratch. They can't see your system, remember your preferences, or actually do things on your behalf.
 
-**OpenAura bridges that gap.**
+**openaur bridges that gap.**
 
 It's a self-hosted AI assistant that:
 - 🧠 **Remembers everything** - Conversations, preferences, system state via OpenMemory
@@ -40,19 +40,19 @@ Think of it as giving your favorite LLM a long-term memory and a bash shell, wra
 
 ---
 
-## Why OpenAura?
+## Why openaur?
 
 ### The Problem with Today's AI Assistants
 
 You know the drill. You spend 20 minutes explaining your nginx setup to Claude or ChatGPT, it gives you great advice, you fix the issue. A week later, same problem happens. You open a new chat and... **start from zero.** It doesn't remember your config, your architecture, or that conversation.
 
-**OpenAura solves this.** It persists context across sessions, so your AI actually learns about you and your systems over time.
+**openaur solves this.** It persists context across sessions, so your AI actually learns about you and your systems over time.
 
 ### Compared to OpenClaw
 
-[OpenClaw](https://github.com/mezoistvan/OpenClaude) pioneered local-first AI agents—but OpenAura extends that vision specifically for **Linux system integration and memory persistence**.
+[OpenClaw](https://github.com/mezoistvan/OpenClaude) pioneered local-first AI agents—but openaur extends that vision specifically for **Linux system integration and memory persistence**.
 
-| Capability | OpenClaw | OpenAura |
+| Capability | OpenClaw | openaur |
 |------------|----------|----------|
 | **Philosophy** | Local-first AI agent | Personal AI with memory + Linux tools |
 | **Cognitive Memory** | Limited session context | Persistent SQLite-backed memory |
@@ -65,7 +65,7 @@ You know the drill. You spend 20 minutes explaining your nginx setup to Claude o
 
 **Choose OpenClaw if:** You want a lightweight, general-purpose local AI agent.
 
-**Choose OpenAura if:** You want an AI that knows your Arch Linux system, remembers everything about your setup, and can actually manage packages and run commands for you.
+**Choose openaur if:** You want an AI that knows your Arch Linux system, remembers everything about your setup, and can actually manage packages and run commands for you.
 
 ---
 
@@ -73,7 +73,7 @@ You know the drill. You spend 20 minutes explaining your nginx setup to Claude o
 
 ### 🧠 Cognitive Memory (OpenMemory)
 
-Unlike cloud AI that forgets when you close the tab, OpenAura remembers:
+Unlike cloud AI that forgets when you close the tab, openaur remembers:
 - **Conversations** - Context across sessions
 - **Preferences** - How you like things configured
 - **System state** - What packages are installed, your configs
@@ -82,11 +82,11 @@ Unlike cloud AI that forgets when you close the tab, OpenAura remembers:
 ```python
 # Example: Month 1
 User: "I need to analyze nginx logs"
-OpenAura: "I see you have nginx installed. Checking /var/log/nginx/error.log..."
+openaur: "I see you have nginx installed. Checking /var/log/nginx/error.log..."
 
 # Month 3, same user
 User: "That nginx issue again"
-OpenAura: "Looking at your nginx setup... same config from March? 
+openaur: "Looking at your nginx setup... same config from March? 
            Let me check if that SSL cert renewal script I wrote for you is still working."
 ```
 
@@ -99,7 +99,7 @@ Built for Arch users who live in the terminal:
 - **Auto-discover** - Crawls man pages to learn your tools
 
 ```bash
-# Make OpenAura aware of your tools
+# Make openaur aware of your tools
 make crawl BINARY=git
 make crawl BINARY=docker
 make crawl BINARY=your-custom-script
@@ -211,7 +211,7 @@ $ openaur chat
 
 You: My nginx is broken after the update
 
-OpenAura: I see you're frustrated. Let me check your setup...
+openaur: I see you're frustrated. Let me check your setup...
 
 🔍 Found: nginx 1.25.3 (installed via pacman)
 📄 Config: /etc/nginx/nginx.conf (modified 2 days ago)
@@ -399,7 +399,7 @@ MIT - See [LICENSE](LICENSE)
 
 ## Acknowledgments
 
-**OpenAura stands on the shoulders of giants:**
+**openaur stands on the shoulders of giants:**
 
 ### Core Stack
 - [FastAPI](https://fastapi.tiangolo.com/) - The high-performance web framework

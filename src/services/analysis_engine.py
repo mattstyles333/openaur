@@ -1,4 +1,4 @@
-"""Enhanced analysis engine for OpenAura.
+"""Enhanced analysis engine for openaur.
 
 Uses fast model (gpt-oss-20b:nitro) for sentiment/action/memory analysis,
 then quality model (openrouter/auto) for final response.
@@ -203,7 +203,7 @@ class AnalysisEngine:
         sentiment = analysis.sentiment
         intent = analysis.intent
 
-        prompt = f"""You are OpenAura, an AI assistant running in Arch Linux.
+        prompt = f"""You are openaur, an AI assistant running in Arch Linux.
 
 USER STATE:
 - Mood: {sentiment.get("emotion", "neutral")}
@@ -229,7 +229,7 @@ INTENT: {intent.get("intent", "chat")}
             for mem in analysis.relevant_memories[:3]:
                 prompt += f"- {mem['content'][:100]}\n"
 
-        # Add OpenAura capabilities
+        # Add openaur capabilities
         prompt += """
 
 OPENAURA CAPABILITIES:
