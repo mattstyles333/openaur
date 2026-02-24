@@ -50,20 +50,21 @@ services:
     networks:
       - openaura-network
 
-  # OpenMemory Dashboard - NOT YET AVAILABLE
-  # The OpenMemory dashboard source code is not published yet.
-  # For now, use the built-in memory browser at http://localhost:8000/memory/ui
-  # openmemory-dashboard:
-  #   image: openmemory-dashboard:latest
-  #   container_name: openmemory-dashboard
-  #   ports:
-  #     - "8001:3000"
-  #   environment:
-  #     - OPENMEMORY_API_URL=http://openaura:8000/memory
-  #   depends_on:
-  #     - openaura
-  #   networks:
-  #     - openaura-network
+  # OpenAur Dashboard - SvelteKit-based monitoring UI
+  openaur-dashboard:
+    build:
+      context: ./apps/dashboard
+      dockerfile: Dockerfile
+    container_name: openaur-dashboard
+    ports:
+      - "8001:3000"
+    environment:
+      - VITE_API_URL=http://openaura:8000
+    depends_on:
+      - openaura
+    restart: unless-stopped
+    networks:
+      - openaura-network
 
 volumes:
   openaura-data:

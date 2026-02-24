@@ -35,8 +35,8 @@ RUN git clone https://aur.archlinux.org/yay-bin.git /tmp/yay-bin && \
 COPY --chown=aura:aura aura-pkg-add.sh /home/aura/.local/bin/aura-pkg-add
 RUN chmod +x /home/aura/.local/bin/aura-pkg-add
 
-COPY --chown=aura:aura requirements.txt /home/aura/
-RUN pip install --user --break-system-packages --no-cache-dir -r /home/aura/requirements.txt
+COPY --chown=aura:aura pyproject.toml README.md /home/aura/
+RUN pip install --user --break-system-packages --no-cache-dir /home/aura/
 
 COPY --chown=aura:aura src/ /home/aura/app/src/
 COPY --chown=aura:aura actions/ /home/aura/app/actions/

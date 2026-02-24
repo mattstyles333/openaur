@@ -42,7 +42,7 @@ class OpenMemory:
 
     def __init__(self):
         self.short_term: List[Memory] = []
-        self.max_short_term = 50
+        self.max_short_term = 30  # Working memory - active context
         self.decay_rate = 0.95  # Importance decay per hour
 
     def store(
@@ -185,8 +185,19 @@ class OpenMemory:
         for memory in self.short_term:
             types[memory.memory_type] = types.get(memory.memory_type, 0) + 1
 
+        # Count long-term memories from database
+        long_term_count = 0
+        try:
+            db = next(get_db())
+            long_term_count = db.query(ExecutionContext).count()
+        except Exception:
+            pass
+
         return {
-            "total_memories": len(self.short_term),
+            "total_memories": len(self.short_term) + long_term_count,
+            "short_term": len(self.short_term),
+            "short_term_max": self.max_short_term,
+            "long_term": long_term_count,
             "by_type": types,
             "max_capacity": self.max_short_term,
             "utilization": len(self.short_term) / self.max_short_term,

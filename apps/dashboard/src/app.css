@@ -1,0 +1,121 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+	--bg-primary: #0a0a0f;
+	--bg-card: #151520;
+	--bg-hover: #1a1a2e;
+	--neon-cyan: #00d4ff;
+	--neon-purple: #7c3aed;
+	--neon-green: #10b981;
+	--neon-red: #ef4444;
+	--neon-yellow: #f59e0b;
+	--text-primary: #e0e0e0;
+	--text-secondary: #888888;
+	--border-subtle: #2a2a3e;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	background-color: var(--bg-primary);
+	color: var(--text-primary);
+	font-family: 'Inter', system-ui, sans-serif;
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--border-subtle);
+	border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--neon-cyan);
+}
+
+/* Code/monospace elements */
+code, pre, .mono {
+	font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Glowing border effect */
+.glow-border {
+	box-shadow: 0 0 20px rgba(0, 212, 255, 0.1);
+	border: 1px solid rgba(0, 212, 255, 0.3);
+}
+
+.glow-border:hover {
+	box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+	border-color: rgba(0, 212, 255, 0.5);
+}
+
+/* Status indicators */
+.status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.status-dot.active {
+	background-color: var(--neon-green);
+	box-shadow: 0 0 10px var(--neon-green);
+}
+
+.status-dot.error {
+	background-color: var(--neon-red);
+	box-shadow: 0 0 10px var(--neon-red);
+}
+
+.status-dot.warning {
+	background-color: var(--neon-yellow);
+	box-shadow: 0 0 10px var(--neon-yellow);
+}
+
+/* Card hover effect */
+.card-hover {
+	transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+}
+
+/* Pulse animation for heart */
+@keyframes heartbeat {
+	0%, 100% { transform: scale(1); }
+	50% { transform: scale(1.1); }
+}
+
+.heart-pulse {
+	animation: heartbeat 2s ease-in-out infinite;
+}
+
+/* Gradient text */
+.gradient-text {
+	background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}

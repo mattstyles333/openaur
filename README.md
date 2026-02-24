@@ -108,6 +108,27 @@ make crawl BINARY=your-custom-script
 make chat MSG="What's the safest way to rewrite my last 3 git commits?"
 ```
 
+**Recommended CLI tools to register:**
+
+```bash
+# Cloud & Infrastructure
+make crawl BINARY=aws          # AWS CLI
+make crawl BINARY=kubectl      # Kubernetes
+make crawl BINARY=terraform    # Infrastructure as code
+
+# Development Tools  
+make crawl BINARY=gh           # GitHub CLI
+make crawl BINARY=opencode     # AI coding agent
+make crawl BINARY=playwright   # Browser automation
+
+# Security & Secrets
+make crawl BINARY=op           # 1Password CLI
+
+# System & Package Management
+make crawl BINARY=yay          # AUR helper
+make crawl BINARY=systemctl    # systemd services
+```
+
 ### 💬 Empathy Engine
 
 Analyzes your sentiment and adapts:
