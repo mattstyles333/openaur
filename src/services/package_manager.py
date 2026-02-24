@@ -1,6 +1,5 @@
-import subprocess
 import re
-from typing import Dict, List, Optional
+import subprocess
 
 
 class PackageManager:
@@ -9,13 +8,18 @@ class PackageManager:
     def __init__(self):
         self.yay_path = self._find_yay()
 
-    def _find_yay(self) -> Optional[str]:
+    def _find_yay(self) -> str | None:
         """Find yay binary path."""
         import shutil
 
-        return shutil.which("yay") or shutil.which("aura-pkg-add")
+        yay = shutil.which("yay")
+        # Only return yay if it's actually the yay AUR helper
+        # Don't return aura-pkg-add or other install scripts
+        if yay and "aura-pkg-add" not in yay:
+            return yay
+        return None
 
-    def search_packages(self, query: str, limit: int = 20) -> List[Dict]:
+    def search_packages(self, query: str, limit: int = 20) -> list[dict]:
         """Search for packages using yay."""
         try:
             if not self.yay_path:
@@ -39,7 +43,7 @@ class PackageManager:
             print(f"Error searching packages: {e}")
             return []
 
-    def _parse_search_results(self, output: str) -> List[Dict]:
+    def _parse_search_results(self, output: str) -> list[dict]:
         """Parse yay/pacman search output."""
         packages = []
         lines = output.strip().split("\n")
@@ -48,14 +52,15 @@ class PackageManager:
         while i < len(lines):
             line = lines[i]
 
-            # Match package line
-            match = re.match(r"^(\S+)/(\S+)\s+(\S+)\s+\(([^)]+)\)\s*(.*)?$", line)
+            # Match package line: "extra/docker 1:29.2.1-1" or "aur/package 1.0.0-1"
+            # Format: repo/name version
+            match = re.match(r"^(\S+)/(\S+)\s+(\S+)$", line)
 
             if match:
                 repo = match.group(1)
                 name = match.group(2)
                 version = match.group(3)
-                description = match.group(5) or ""
+                description = ""
 
                 # Check next line for description
                 if i + 1 < len(lines) and lines[i + 1].strip().startswith("    "):
@@ -77,7 +82,7 @@ class PackageManager:
 
         return packages
 
-    def install_package(self, package: str) -> Dict:
+    def install_package(self, package: str) -> dict:
         """Install a package using aura-pkg-add."""
         try:
             result = subprocess.run(
@@ -86,11 +91,18 @@ class PackageManager:
 
             success = result.returncode == 0
 
+            # Combine stdout and stderr for error messages
+            output = result.stdout
+            if not success and not output:
+                output = result.stderr
+            if not output:
+                output = "Unknown error"
+
             return {
                 "success": success,
                 "package": package,
-                "output": result.stdout if success else result.stderr,
-                "source": self._detect_source(result.stdout),
+                "output": output,
+                "source": self._detect_source(result.stdout) if success else "unknown",
             }
         except subprocess.TimeoutExpired:
             return {
@@ -107,7 +119,7 @@ class PackageManager:
             return "aur"
         return "official"
 
-    def remove_package(self, package: str) -> Dict:
+    def remove_package(self, package: str) -> dict:
         """Remove a package."""
         try:
             result = subprocess.run(
@@ -125,7 +137,7 @@ class PackageManager:
         except Exception as e:
             return {"success": False, "package": package, "error": str(e)}
 
-    def cleanup_unused(self) -> Dict:
+    def cleanup_unused(self) -> dict:
         """Remove unused packages."""
         try:
             result = subprocess.run(

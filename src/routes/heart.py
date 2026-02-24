@@ -1,6 +1,7 @@
-from fastapi import APIRouter
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any
+
+from fastapi import APIRouter
 
 from src.services.analysis_engine import get_analysis_engine
 
@@ -9,7 +10,7 @@ analysis_engine = get_analysis_engine()
 
 
 @router.get("/")
-async def heart() -> Dict[str, Any]:
+async def heart() -> dict[str, Any]:
     """
     The Heart of openaur - combines system health and emotional state.
 
@@ -44,7 +45,7 @@ async def heart() -> Dict[str, Any]:
 
 
 @router.post("/check")
-async def heart_check(message: str = "How are you feeling?") -> Dict[str, Any]:
+async def heart_check(message: str = "How are you feeling?") -> dict[str, Any]:
     """
     Check the heart with sentiment analysis using fast model.
 

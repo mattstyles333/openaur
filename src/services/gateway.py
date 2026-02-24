@@ -1,6 +1,6 @@
-import httpx
 import os
-from typing import Optional, List, Dict
+
+import httpx
 
 
 class OpenRouterGateway:
@@ -9,14 +9,14 @@ class OpenRouterGateway:
     def __init__(self):
         self.api_key = os.getenv("OPENROUTER_API_KEY")
         self.base_url = "https://openrouter.ai/api/v1"
-        self.model = os.getenv("OPENROUTER_MODEL", "anthropic/claude-3.5-sonnet")
+        self.model = os.getenv("CHAT_MODEL", os.getenv("OPENROUTER_MODEL", "openrouter/auto"))
 
     async def chat(
         self,
         message: str,
         system_prompt: str = "You are a helpful assistant.",
-        session_id: Optional[str] = None,
-    ) -> Dict:
+        session_id: str | None = None,
+    ) -> dict:
         """Send chat request to OpenRouter."""
 
         headers = {
@@ -54,7 +54,7 @@ class OpenRouterGateway:
                 "usage": data.get("usage", {}),
             }
 
-    async def list_models(self) -> List[Dict]:
+    async def list_models(self) -> list[dict]:
         """List available models."""
         headers = {"Authorization": f"Bearer {self.api_key}"}
 

@@ -63,6 +63,7 @@ RUN pacman -Syu --noconfirm && \
 
 COPY --from=builder /etc/sudoers /etc/sudoers
 COPY --from=builder /home/aura /home/aura
+COPY --from=builder /usr/bin/yay /usr/bin/yay
 
 RUN useradd -u 1000 -m -G wheel -s /bin/bash aura 2>/dev/null || true && \
     chown -R aura:aura /home/aura

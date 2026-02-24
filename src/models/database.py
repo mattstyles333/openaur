@@ -1,18 +1,19 @@
+import os
+from datetime import datetime
+
 from sqlalchemy import (
-    create_engine,
-    Column,
-    String,
-    Integer,
-    Boolean,
-    DateTime,
-    Text,
-    ForeignKey,
     JSON,
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    create_engine,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from datetime import datetime
-import os
 
 # Create data directory before engine initialization
 data_dir = "/home/aura/app/data"
@@ -102,6 +103,15 @@ class EmailSyncState(Base):
     last_sync_timestamp = Column(DateTime)
     last_message_id = Column(String)
     retention_days = Column(Integer, default=90)
+
+
+class Setting(Base):
+    """Application settings storage."""
+    __tablename__ = "settings"
+
+    key = Column(String, primary_key=True)
+    value = Column(JSON)  # Store any JSON-serializable value
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 def get_db():

@@ -3,10 +3,10 @@
 Tries to use openmemory-py SDK, falls back to SQLite if not available.
 """
 
-from typing import List, Optional, Dict, Any
-from datetime import datetime
-import os
 import hashlib
+import os
+from datetime import datetime
+from typing import Any
 
 # Try to import OpenMemory SDK
 try:
@@ -17,7 +17,8 @@ except ImportError:
     HAS_OPENMEMORY = False
     print("⚠️  OpenMemory SDK not available, using SQLite fallback")
 
-from sqlalchemy import Column, String, Float, DateTime, Integer, Text, JSON
+from sqlalchemy import JSON, Column, DateTime, Float, Integer, String, Text
+
 from src.models.database import Base, get_db
 
 
@@ -67,10 +68,10 @@ class OpenMemoryService:
         content: str,
         memory_type: str = "episodic",
         importance: float = 0.8,
-        tags: List[str] = None,
-        metadata: Dict[str, Any] = None,
+        tags: list[str] = None,
+        metadata: dict[str, Any] = None,
         user_id: str = "default",
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Store a memory."""
         if self.use_sdk and self.client:
             try:
@@ -117,11 +118,11 @@ class OpenMemoryService:
     async def retrieve(
         self,
         query: str,
-        memory_type: Optional[str] = None,
+        memory_type: str | None = None,
         limit: int = 10,
         min_salience: float = 0.0,
         user_id: str = "default",
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Retrieve memories."""
         if self.use_sdk and self.client:
             try:
@@ -206,7 +207,51 @@ class OpenMemoryService:
                 pass
         return False
 
-    async def stats(self, user_id: str = "default") -> Dict[str, Any]:
+    async def delete(self, memory_id: str) -> bool:
+        """Delete a memory by ID."""
+        if self.use_sdk and self.client:
+            try:
+                await self.client.delete(memory_id)
+                return True
+            except Exception as e:
+                print(f"OpenMemory delete failed: {e}, falling back to SQLite")
+
+        # SQLite fallback
+        try:
+            db = next(get_db())
+            memory = db.query(Memory).filter(Memory.id == memory_id).first()
+            if memory:
+                db.delete(memory)
+                db.commit()
+                return True
+            return False
+        except Exception as e:
+            print(f"SQLite delete failed: {e}")
+            return False
+
+    async def update_tags(self, memory_id: str, tags: list[str]) -> bool:
+        """Update tags for a memory."""
+        if self.use_sdk and self.client:
+            try:
+                await self.client.update(memory_id, {"metadata.tags": tags})
+                return True
+            except Exception as e:
+                print(f"OpenMemory update failed: {e}, falling back to SQLite")
+
+        # SQLite fallback
+        try:
+            db = next(get_db())
+            memory = db.query(Memory).filter(Memory.id == memory_id).first()
+            if memory:
+                memory.tags = tags
+                db.commit()
+                return True
+            return False
+        except Exception as e:
+            print(f"SQLite update failed: {e}")
+            return False
+
+    async def stats(self, user_id: str = "default") -> dict[str, Any]:
         """Get memory statistics."""
         if self.use_sdk and self.client:
             try:
@@ -261,7 +306,7 @@ class OpenMemoryService:
 
 
 # Singleton
-_service_instance: Optional[OpenMemoryService] = None
+_service_instance: OpenMemoryService | None = None
 
 
 def get_memory() -> OpenMemoryService:
@@ -278,9 +323,9 @@ class SessionMemory:
     def __init__(self, session_id: str):
         self.session_id = session_id
         self.memory = get_memory()
-        self.conversation_history: List[Dict[str, Any]] = []
+        self.conversation_history: list[dict[str, Any]] = []
 
-    async def add_message(self, role: str, content: str, metadata: Dict = None):
+    async def add_message(self, role: str, content: str, metadata: dict = None):
         """Add a message to session history and memory."""
         message = {
             "role": role,
@@ -298,7 +343,7 @@ class SessionMemory:
                 user_id=self.session_id,
             )
 
-    async def get_enhanced_context(self, query: str) -> Dict[str, Any]:
+    async def get_enhanced_context(self, query: str) -> dict[str, Any]:
         """Get enhanced context."""
         relevant = await self.memory.retrieve(query, user_id=self.session_id, limit=5)
 
@@ -308,7 +353,7 @@ class SessionMemory:
         }
 
 
-_session_memories: Dict[str, SessionMemory] = {}
+_session_memories: dict[str, SessionMemory] = {}
 
 
 def get_session_memory(session_id: str) -> SessionMemory:

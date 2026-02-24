@@ -1,0 +1,12 @@
+binary: pwd
+binary_path: /usr/sbin/pwd
+safety: 1
+description: 'CLI tool: pwd'
+tree:
+  pwd:
+    description: No description available
+    safety: 1
+    args: {}
+metadata:
+  version: '1.0'
+  format: openaura-v1

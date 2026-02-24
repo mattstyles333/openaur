@@ -3,10 +3,10 @@
 API endpoints for email synchronization and management.
 """
 
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Optional, Dict, Any
-from pydantic import BaseModel
 from datetime import datetime
+
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 from src.services.email_ingestion import EmailIngestionService
 
@@ -20,9 +20,9 @@ class EmailSyncRequest(BaseModel):
 
 class EmailSearchRequest(BaseModel):
     query: str
-    folder: Optional[str] = None
-    since: Optional[datetime] = None
-    is_sent: Optional[bool] = None
+    folder: str | None = None
+    since: datetime | None = None
+    is_sent: bool | None = None
     limit: int = 50
 
 
@@ -30,7 +30,7 @@ class EmailResponse(BaseModel):
     id: str
     subject: str
     sender: str
-    recipients: List[str]
+    recipients: list[str]
     date: str
     folder: str
     is_sent: bool

@@ -5,26 +5,28 @@ Uses fast/cheap model (gpt-oss-20b:nitro) for preprocessing tasks:
 - Action detection
 - Memory retrieval
 - Sentiment analysis
+- Quick preview responses (when Instant Preview enabled)
 
 Then uses quality model (openrouter/auto) for final response.
 """
 
-from typing import Dict, Any, Optional, List
-import httpx
+import asyncio
 import os
+from typing import Any
+
+import httpx
 
 
 class TwoStageProcessor:
     """Two-stage LLM processor for cost/performance optimization."""
-
-    # Fast model for preprocessing
-    FAST_MODEL = "openai/gpt-oss-20b:nitro"
 
     # Quality model for final response
     QUALITY_MODEL = "openrouter/auto"
 
     def __init__(self):
         self.api_key = os.getenv("OPENROUTER_API_KEY")
+        # Fast model for preprocessing (empathy/analysis) - can be configured
+        self.fast_model = os.getenv("HEART_MODEL", "openai/gpt-oss-20b:nitro")
         self.base_url = "https://openrouter.ai/api/v1"
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -52,7 +54,7 @@ class TwoStageProcessor:
         ]
 
         payload = {
-            "model": self.FAST_MODEL,
+            "model": self.fast_model,
             "messages": messages,
             "max_tokens": 500,  # Keep it short and fast
             "temperature": 0.3,  # Lower temp for more consistent analysis
@@ -130,7 +132,7 @@ class TwoStageProcessor:
 
         return False
 
-    async def analyze_intent(self, user_message: str) -> Dict[str, Any]:
+    async def analyze_intent(self, user_message: str) -> dict[str, Any]:
         """Analyze user intent using fast model."""
         system_prompt = """You are an intent analysis system. Analyze the user's query and return a JSON object with:
 {
@@ -177,7 +179,7 @@ Be concise. Return ONLY the JSON object."""
                 "confidence": 0.5,
             }
 
-    async def analyze_sentiment(self, user_message: str) -> Dict[str, Any]:
+    async def analyze_sentiment(self, user_message: str) -> dict[str, Any]:
         """Analyze sentiment using fast model."""
         system_prompt = """You are a sentiment analysis system. Analyze the user's message and return a JSON object with:
 {
@@ -212,7 +214,7 @@ Be concise. Return ONLY the JSON object."""
                 "tone": "casual",
             }
 
-    async def extract_memory_query(self, user_message: str) -> Optional[str]:
+    async def extract_memory_query(self, user_message: str) -> str | None:
         """Extract if user is asking about previous context."""
         system_prompt = """You are a memory query extractor. If the user is asking about something from a previous conversation, return the search query to find relevant memories. Otherwise return "NONE".
 
@@ -234,8 +236,8 @@ Return ONLY the search query or "NONE"."""
             return None
 
     async def suggest_actions(
-        self, user_message: str, available_tools: List[str]
-    ) -> List[Dict[str, Any]]:
+        self, user_message: str, available_tools: list[str]
+    ) -> list[dict[str, Any]]:
         """Suggest relevant actions using fast model."""
         system_prompt = f"""You are an action suggestion system. Based on the user's query and available tools, suggest which actions to use.
 
@@ -266,8 +268,8 @@ Return ONLY the JSON array."""
             return []
 
     async def call_quality(
-        self, system_prompt: str, user_message: str, context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, system_prompt: str, user_message: str, context: dict[str, Any]
+    ) -> dict[str, Any]:
         """Call quality model with full context."""
         # Build enriched messages
         messages = []
@@ -327,9 +329,149 @@ SYSTEM INFO:
                 "usage": data.get("usage", {}),
             }
 
+    async def chat_with_preview(
+        self,
+        user_message: str,
+        system_prompt: str = "You are a helpful assistant.",
+        context: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Get both fast preview and quality response in parallel.
+
+        Returns:
+            {
+                "preview": {"content": str, "model": str},  # Fast model response
+                "quality": {"content": str, "model": str},   # Quality model response
+                "context": dict  # Analysis context
+            }
+        """
+        if context is None:
+            context = {}
+
+        try:
+            # Build quality model messages (full context)
+            quality_messages = [{"role": "system", "content": system_prompt}]
+
+            # Add sentiment/context info
+            sentiment = context.get("sentiment", {})
+            if sentiment:
+                context_str = f"""USER CONTEXT:
+- Mood: {sentiment.get("mood", "neutral")}
+- Urgency: {sentiment.get("urgency", 0.5)}
+- State: {sentiment.get("state", "neutral")}
+
+{system_prompt}"""
+                quality_messages[0] = {"role": "system", "content": context_str}
+
+            # Add relevant memories
+            memories = context.get("relevant_memories", [])
+            if memories:
+                memory_context = "Relevant context:\n"
+                for mem in memories[:3]:
+                    memory_context += f"- {mem.get('content', '')[:150]}\n"
+                quality_messages.append({"role": "system", "content": memory_context})
+
+            quality_messages.append({"role": "user", "content": user_message})
+
+            # Build fast model messages (simpler prompt for quick response)
+            # The fast model gets a simplified prompt to avoid confusion
+            fast_system = (
+                "You are a helpful assistant. Answer the user's question directly and concisely."
+            )
+            fast_messages = [
+                {"role": "system", "content": fast_system},
+                {"role": "user", "content": user_message},
+            ]
+
+            # Build payloads for both models
+            fast_payload = {
+                "model": self.fast_model,
+                "messages": fast_messages,
+                "max_tokens": 800,
+                "temperature": 0.7,  # Slightly higher for more natural responses
+            }
+
+            quality_payload = {
+                "model": self.QUALITY_MODEL,
+                "messages": quality_messages,
+                "temperature": 0.7,
+            }
+
+            # Call both models in parallel
+            async with httpx.AsyncClient() as client:
+                fast_task = client.post(
+                    f"{self.base_url}/chat/completions",
+                    headers=self.headers,
+                    json=fast_payload,
+                    timeout=30.0,
+                )
+                quality_task = client.post(
+                    f"{self.base_url}/chat/completions",
+                    headers=self.headers,
+                    json=quality_payload,
+                    timeout=60.0,
+                )
+
+                results = await asyncio.gather(fast_task, quality_task, return_exceptions=True)
+
+            # Parse responses
+            preview = None
+            quality = None
+
+            fast_result, quality_result = results[0], results[1]
+
+            # Check if result is a response (not an exception)
+            if not isinstance(fast_result, Exception):
+                try:
+                    if fast_result.status_code == 200:
+                        data = fast_result.json()
+                        preview = {
+                            "content": data["choices"][0]["message"]["content"],
+                            "model": data.get("model", self.fast_model),
+                        }
+                except Exception as e:
+                    print(f"Error parsing fast model response: {e}")
+            else:
+                print(f"Fast model error: {fast_result}")
+
+            if not isinstance(quality_result, Exception):
+                try:
+                    if quality_result.status_code == 200:
+                        data = quality_result.json()
+                        quality = {
+                            "content": data["choices"][0]["message"]["content"],
+                            "model": data.get("model", self.QUALITY_MODEL),
+                        }
+                except Exception as e:
+                    print(f"Error parsing quality model response: {e}")
+            else:
+                print(f"Quality model error: {quality_result}")
+
+            # If quality failed but preview succeeded, use preview as quality
+            if quality is None and preview is not None:
+                quality = preview
+                preview = None
+
+            return {
+                "preview": preview,
+                "quality": quality,
+                "context": context,
+            }
+        except Exception as e:
+            print(f"Error in chat_with_preview: {e}")
+            import traceback
+
+            print(traceback.format_exc())
+            # Return empty response on error
+            return {
+                "preview": None,
+                "quality": None,
+                "context": context,
+                "error": str(e),
+            }
+
 
 # Singleton instance
-_processor: Optional[TwoStageProcessor] = None
+_processor: TwoStageProcessor | None = None
 
 
 def get_processor() -> TwoStageProcessor:

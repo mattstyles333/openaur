@@ -4,12 +4,12 @@ Syncs emails from providers using offlineimap or gogcli.
 Stores emails for RAG and memory indexing.
 """
 
-from typing import List, Optional, Dict, Any
-from datetime import datetime, timedelta
-from dataclasses import dataclass
-from pathlib import Path
-import re
 import json
+import re
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
+from typing import Any
 
 
 @dataclass
@@ -19,15 +19,15 @@ class Email:
     id: str
     subject: str
     sender: str
-    recipients: List[str]
+    recipients: list[str]
     date: datetime
     body_text: str
-    body_html: Optional[str] = None
+    body_html: str | None = None
     folder: str = "INBOX"
     is_sent: bool = False
-    thread_id: Optional[str] = None
-    labels: List[str] = None
-    attachments: List[Dict[str, Any]] = None
+    thread_id: str | None = None
+    labels: list[str] = None
+    attachments: list[dict[str, Any]] = None
 
     def __post_init__(self):
         if self.labels is None:
@@ -59,7 +59,7 @@ class EmailIngestionService:
             "已发送邮件",
         ]
 
-    async def sync_gogcli(self, takeout_path: str) -> Dict[str, Any]:
+    async def sync_gogcli(self, takeout_path: str) -> dict[str, Any]:
         """Sync emails from Google Takeout (Gogcli format).
 
         Args:
@@ -100,7 +100,7 @@ class EmailIngestionService:
             "synced_at": datetime.utcnow().isoformat(),
         }
 
-    async def sync_offlineimap(self, maildir_path: str) -> Dict[str, Any]:
+    async def sync_offlineimap(self, maildir_path: str) -> dict[str, Any]:
         """Sync emails from OfflineIMAP Maildir.
 
         Args:
@@ -147,7 +147,7 @@ class EmailIngestionService:
             "synced_at": datetime.utcnow().isoformat(),
         }
 
-    def _parse_mbox(self, mbox_path: Path, folder: str, is_sent: bool) -> List[Email]:
+    def _parse_mbox(self, mbox_path: Path, folder: str, is_sent: bool) -> list[Email]:
         """Parse an mbox file into Email objects."""
         emails = []
         content = mbox_path.read_text(encoding="utf-8", errors="ignore")
@@ -174,7 +174,7 @@ class EmailIngestionService:
 
     def _parse_email_content(
         self, content: str, folder: str, is_sent: bool
-    ) -> Optional[Email]:
+    ) -> Email | None:
         """Parse raw email content into Email object."""
         # Simple header parsing
         header_match = re.match(r"((?:[^\n]+\n)+)\n(.*)", content, re.DOTALL)
@@ -211,7 +211,7 @@ class EmailIngestionService:
             is_sent=is_sent,
         )
 
-    def _parse_headers(self, headers_text: str) -> Dict[str, str]:
+    def _parse_headers(self, headers_text: str) -> dict[str, str]:
         """Parse email headers."""
         headers = {}
         current_key = None
@@ -229,7 +229,7 @@ class EmailIngestionService:
 
         return headers
 
-    def _parse_addresses(self, address_string: str) -> List[str]:
+    def _parse_addresses(self, address_string: str) -> list[str]:
         """Parse email addresses from string."""
         if not address_string:
             return []
@@ -326,10 +326,10 @@ class EmailIngestionService:
     async def search_emails(
         self,
         query: str,
-        folder: Optional[str] = None,
-        since: Optional[datetime] = None,
-        is_sent: Optional[bool] = None,
-    ) -> List[Email]:
+        folder: str | None = None,
+        since: datetime | None = None,
+        is_sent: bool | None = None,
+    ) -> list[Email]:
         """Search stored emails."""
         results = []
 
@@ -366,7 +366,7 @@ class EmailIngestionService:
 
         return results
 
-    def _dict_to_email(self, data: Dict) -> Email:
+    def _dict_to_email(self, data: dict) -> Email:
         """Convert dict to Email object."""
         return Email(
             id=data["id"],
@@ -382,7 +382,7 @@ class EmailIngestionService:
             thread_id=data.get("thread_id"),
         )
 
-    def get_sent_emails(self, limit: int = 100) -> List[Email]:
+    def get_sent_emails(self, limit: int = 100) -> list[Email]:
         """Get recent sent emails."""
         sent = []
 
@@ -400,7 +400,7 @@ class EmailIngestionService:
 
         return sent[:limit]
 
-    def get_stats(self) -> Dict[str, Any]:
+    def get_stats(self) -> dict[str, Any]:
         """Get email statistics."""
         total = 0
         sent_count = 0

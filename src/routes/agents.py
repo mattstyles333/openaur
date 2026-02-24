@@ -3,15 +3,13 @@
 Provides endpoints for spawning, managing, and monitoring sub-agents.
 """
 
-from fastapi import APIRouter, HTTPException, BackgroundTasks
-from typing import List, Dict, Any, Optional
+from typing import Any
+
+from fastapi import APIRouter, BackgroundTasks, HTTPException
 from pydantic import BaseModel
 
 from src.services.agents import (
     get_agent_registry,
-    AgentRegistry,
-    AgentDefinition,
-    AgentState,
 )
 
 router = APIRouter()
@@ -23,14 +21,14 @@ class AgentCreateRequest(BaseModel):
     description: str
     system_prompt: str
     model: str = "openrouter/auto"
-    tools: List[str] = []
-    parent_id: Optional[str] = None
+    tools: list[str] = []
+    parent_id: str | None = None
 
 
 class AgentSpawnRequest(BaseModel):
     agent_id: str
     task_description: str
-    task_context: Dict[str, Any] = {}
+    task_context: dict[str, Any] = {}
 
 
 class AgentResponse(BaseModel):
@@ -38,8 +36,8 @@ class AgentResponse(BaseModel):
     name: str
     description: str
     model: str
-    tools: List[str]
-    state: Optional[str] = None
+    tools: list[str]
+    state: str | None = None
 
 
 @router.post("/register")
@@ -144,7 +142,7 @@ async def spawn_agent(request: AgentSpawnRequest, background_tasks: BackgroundTa
 async def list_running_agents():
     """List all currently running agent instances."""
     registry = get_agent_registry()
-    agents = registry.list_running_agents()
+    agents = await registry.list_running_agents()
 
     return {"count": len(agents), "agents": agents}
 
@@ -158,7 +156,7 @@ async def get_agent_status(session_id: str):
     if not agent:
         raise HTTPException(status_code=404, detail="Agent not found")
 
-    return agent.get_status()
+    return await agent.get_status()
 
 
 @router.post("/running/{session_id}/pause")

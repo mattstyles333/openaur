@@ -5,6 +5,7 @@ Provides HTML endpoints for browsing and managing memories.
 
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
+
 from src.services.openmemory import get_memory
 
 router = APIRouter()

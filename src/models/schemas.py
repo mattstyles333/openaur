@@ -1,19 +1,21 @@
-from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
 from datetime import datetime
+from typing import Any
+
+from pydantic import BaseModel
 
 
 class ChatRequest(BaseModel):
     message: str
-    session_id: Optional[str] = None
+    session_id: str | None = None
     context_depth: int = 2
 
 
 class ChatResponse(BaseModel):
     response: str
     session_id: str
-    tools_used: List[str] = []
-    emotional_adaptation: Optional[str] = None
+    tools_used: list[str] = []
+    emotional_adaptation: str | None = None
+    preview_used: bool = False  # True if Instant Preview (dual response) was used
 
 
 class PackageSearchResult(BaseModel):
@@ -26,7 +28,7 @@ class PackageSearchResult(BaseModel):
 class PackageInstallRequest(BaseModel):
     package: str
     auto: bool = False
-    context: Optional[str] = None
+    context: str | None = None
 
 
 class SessionCreateRequest(BaseModel):
@@ -41,8 +43,8 @@ class SessionResponse(BaseModel):
     status: str
     command: str
     started_at: datetime
-    completed_at: Optional[datetime] = None
-    exit_code: Optional[int] = None
+    completed_at: datetime | None = None
+    exit_code: int | None = None
 
 
 class ActionCreateRequest(BaseModel):
@@ -55,4 +57,4 @@ class ActionTreeNode(BaseModel):
     command: str
     description: str
     safety: int
-    subcommands: Optional[Dict[str, Any]] = None
+    subcommands: dict[str, Any] | None = None

@@ -8,6 +8,17 @@
 			   'text-text-secondary';
 	}
 
+	function formatDate(dateStr: string): string {
+		if (!dateStr) return 'Unknown';
+		try {
+			const date = new Date(dateStr);
+			if (isNaN(date.getTime())) return 'Unknown';
+			return date.toLocaleString();
+		} catch {
+			return 'Unknown';
+		}
+	}
+
 	// Reactive stats
 	const activeCount = $derived($sessionsStore.sessions.filter((s: { status: string }) => s.status === 'active').length);
 	const completedCount = $derived($sessionsStore.sessions.filter((s: { status: string }) => s.status === 'completed').length);
@@ -82,7 +93,7 @@
 									</span>
 								</td>
 								<td class="p-4 text-text-secondary">
-									{new Date(session.created_at).toLocaleString()}
+									{formatDate(session.created_at)}
 								</td>
 								<td class="p-4 text-text-secondary mono">
 									{session.pid || '-'}

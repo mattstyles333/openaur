@@ -1,0 +1,18 @@
+binary: ls
+binary_path: /usr/sbin/ls
+safety: 1
+description: 'CLI tool: ls'
+tree:
+  ls:
+    description: List information about the FILEs (the current directory by default).
+    safety: 3
+    args:
+      --sort: is specified.
+      --time: "\e]8;;https://www.gnu.org/software/coreutils/manual/coreutils.html#ls-T\e\
+        \\\e[1m-T, --tabsize=COLS\e[0m\e]"
+      -a: or -A)
+      -l: and -s, print sizes like 1K 234M 2G etc.
+      -s: and per directory totals
+metadata:
+  version: '1.0'
+  format: openaura-v1

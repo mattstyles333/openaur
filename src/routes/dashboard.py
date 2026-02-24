@@ -3,14 +3,14 @@
 Provides a unified view of openaur system state.
 """
 
-from fastapi import APIRouter
-from typing import Dict, Any
-import psutil
 import os
 from datetime import datetime
 
-from src.services.openmemory import get_memory
+import psutil
+from fastapi import APIRouter
+
 from src.services.email_ingestion import EmailIngestionService
+from src.services.openmemory import get_memory
 
 router = APIRouter()
 
@@ -116,7 +116,6 @@ def _check_database() -> bool:
 
 def _check_openrouter() -> bool:
     """Check OpenRouter connectivity."""
-    import os
 
     api_key = os.getenv("OPENROUTER_API_KEY")
     return api_key is not None and len(api_key) > 0

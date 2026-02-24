@@ -1,0 +1,12 @@
+binary: echo
+binary_path: /usr/sbin/echo
+safety: 1
+description: 'CLI tool: echo'
+tree:
+  echo:
+    description: No description available
+    safety: 1
+    args: {}
+metadata:
+  version: '1.0'
+  format: openaura-v1

@@ -3,11 +3,11 @@
 Analyzes user queries, manages actions, retrieves memories, and builds context.
 """
 
-import re
-from typing import List, Dict, Any, Optional, Tuple
+from typing import Any
+
 from src.services.openmemory import get_memory
-from src.utils.yaml_registry import YamlRegistry
 from src.services.package_manager import PackageManager
+from src.utils.yaml_registry import YamlRegistry
 
 
 class IntentAnalyzer:
@@ -72,7 +72,7 @@ class IntentAnalyzer:
         "we discussed",
     ]
 
-    def analyze(self, query: str) -> Dict[str, Any]:
+    def analyze(self, query: str) -> dict[str, Any]:
         """Analyze user query for intent."""
         query_lower = query.lower()
 
@@ -106,7 +106,7 @@ class IntentAnalyzer:
             "confidence": self._calculate_confidence(query_lower, intent),
         }
 
-    def _extract_tools(self, query: str) -> List[str]:
+    def _extract_tools(self, query: str) -> list[str]:
         """Extract potential tool names from query."""
         # Common CLI tools
         common_tools = [
@@ -171,7 +171,7 @@ class ActionSuggester:
         self.yaml_reg = YamlRegistry()
         self.pkg_manager = PackageManager()
 
-    def suggest(self, intent: Dict[str, Any]) -> Dict[str, Any]:
+    def suggest(self, intent: dict[str, Any]) -> dict[str, Any]:
         """Suggest actions based on intent."""
         tools = intent.get("tools_mentioned", [])
         suggestions = {
@@ -229,8 +229,8 @@ class MemoryManager:
         self,
         user_query: str,
         assistant_response: str,
-        intent: Dict[str, Any],
-        actions_used: Optional[List[str]] = None,
+        intent: dict[str, Any],
+        actions_used: list[str] | None = None,
     ):
         """Store interaction in memory."""
         # Store user query
@@ -261,7 +261,7 @@ class MemoryManager:
                     tags=["action", action, "learning"],
                 )
 
-    def get_relevant_context(self, query: str, limit: int = 5) -> List[Dict[str, Any]]:
+    def get_relevant_context(self, query: str, limit: int = 5) -> list[dict[str, Any]]:
         """Get relevant memories for context."""
         memories = self.memory.retrieve(query, limit=limit, min_importance=0.3)
 
@@ -306,7 +306,7 @@ class ContextBuilder:
         self.intent_analyzer = IntentAnalyzer()
         self.action_suggester = ActionSuggester()
 
-    def build(self, user_query: str, session_id: str) -> Dict[str, Any]:
+    def build(self, user_query: str, session_id: str) -> dict[str, Any]:
         """Build complete context for a query."""
         # Analyze intent
         intent = self.intent_analyzer.analyze(user_query)
@@ -329,7 +329,7 @@ class ContextBuilder:
             "memory_manager": memory_mgr,
         }
 
-    def build_system_prompt(self, context: Dict[str, Any]) -> str:
+    def build_system_prompt(self, context: dict[str, Any]) -> str:
         """Build system prompt with full context."""
         # Base openaur context
         base = """You are openaur, an AI assistant running in an Arch Linux environment.
@@ -371,14 +371,14 @@ When users ask about openaur capabilities, reference these features."""
         action_str = ""
         suggestions = context.get("action_suggestions", {})
         if suggestions.get("available"):
-            action_str += f"\n\nAVAILABLE ACTIONS:"
+            action_str += "\n\nAVAILABLE ACTIONS:"
             for action in suggestions["available"]:
                 action_str += (
                     f"\n- {action['tool']}: {', '.join(action['commands'][:3])}"
                 )
 
         if suggestions.get("can_install"):
-            action_str += f"\n\nCAN INSTALL:"
+            action_str += "\n\nCAN INSTALL:"
             for action in suggestions["can_install"]:
                 action_str += f"\n- {action['tool']}: {action['install_cmd']}"
 
@@ -386,7 +386,7 @@ When users ask about openaur capabilities, reference these features."""
         memory_str = ""
         memories = context.get("relevant_memories", [])
         if memories:
-            memory_str += f"\n\nRELEVANT MEMORIES:"
+            memory_str += "\n\nRELEVANT MEMORIES:"
             for mem in memories[:3]:
                 memory_str += f"\n- [{mem['type']}] {mem['content'][:100]}"
 

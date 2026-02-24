@@ -1,0 +1,12 @@
+binary: '['
+binary_path: /usr/sbin/[
+safety: 2
+description: 'CLI tool: ['
+tree:
+  '[':
+    description: No description available
+    safety: 1
+    args: {}
+metadata:
+  version: '1.0'
+  format: openaura-v1

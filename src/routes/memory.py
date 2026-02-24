@@ -4,11 +4,13 @@ Provides endpoints for memory storage, retrieval, and management
 using OpenMemory's Hierarchical Memory Decomposition architecture.
 """
 
+from typing import Any
+
 from fastapi import APIRouter, HTTPException
-from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 
-from src.services.openmemory import get_memory, OpenMemoryService
+from src.services.openmemory import OpenMemoryService, get_memory
+from src.services.websocket_manager import broadcast_memory_update
 
 router = APIRouter()
 memory_service: OpenMemoryService = get_memory()
@@ -18,14 +20,14 @@ class MemoryCreateRequest(BaseModel):
     content: str
     memory_type: str = "episodic"
     importance: float = 0.8
-    tags: List[str] = []
-    metadata: Dict[str, Any] = {}
+    tags: list[str] = []
+    metadata: dict[str, Any] = {}
     user_id: str = "default"
 
 
 class MemoryQueryRequest(BaseModel):
     query: str
-    memory_type: Optional[str] = None
+    memory_type: str | None = None
     limit: int = 10
     min_importance: float = 0.0
     user_id: str = "default"
@@ -34,6 +36,10 @@ class MemoryQueryRequest(BaseModel):
 class ReinforceRequest(BaseModel):
     memory_id: str
     amount: float = 0.1
+
+
+class UpdateTagsRequest(BaseModel):
+    tags: list[str]
 
 
 @router.post("/store")
@@ -48,6 +54,9 @@ async def store_memory(request: MemoryCreateRequest):
             metadata=request.metadata,
             user_id=request.user_id,
         )
+        # Broadcast update to connected clients
+        stats = await memory_service.stats(user_id=request.user_id)
+        await broadcast_memory_update(stats, [])
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -83,6 +92,9 @@ async def reinforce_memory(request: ReinforceRequest):
     """Reinforce a memory to boost its salience."""
     try:
         success = await memory_service.reinforce(request.memory_id, request.amount)
+        # Broadcast update to connected clients
+        stats = await memory_service.stats()
+        await broadcast_memory_update(stats, [])
         return {"success": success}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -94,6 +106,40 @@ async def get_memory_stats(user_id: str = "default"):
     try:
         stats = await memory_service.stats(user_id=user_id)
         return stats
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.delete("/{memory_id}")
+async def delete_memory(memory_id: str):
+    """Delete a memory by ID."""
+    try:
+        success = await memory_service.delete(memory_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Memory not found")
+        # Broadcast update to connected clients
+        stats = await memory_service.stats()
+        await broadcast_memory_update(stats, [])
+        return {"success": True, "message": "Memory deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.patch("/{memory_id}/tags")
+async def update_memory_tags(memory_id: str, request: UpdateTagsRequest):
+    """Update tags for a memory."""
+    try:
+        success = await memory_service.update_tags(memory_id, request.tags)
+        if not success:
+            raise HTTPException(status_code=404, detail="Memory not found")
+        # Broadcast update to connected clients
+        stats = await memory_service.stats()
+        await broadcast_memory_update(stats, [])
+        return {"success": True, "message": "Tags updated"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

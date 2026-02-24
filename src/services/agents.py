@@ -4,16 +4,16 @@ Manages specialized AI agents that run in isolated tmux sessions.
 Each sub-agent has its own context, memory, and tool access.
 """
 
-from typing import Dict, List, Optional, Any, Callable
+import asyncio
+import json
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-import json
-import asyncio
 from pathlib import Path
+from typing import Any
 
+from src.services.openmemory import SessionMemory
 from src.services.tmux_executor import TmuxExecutor
-from src.services.openmemory import get_memory, SessionMemory
 
 
 class AgentState(Enum):
@@ -35,10 +35,10 @@ class AgentDefinition:
     description: str
     system_prompt: str
     model: str = "openrouter/auto"
-    tools: List[str] = field(default_factory=list)
+    tools: list[str] = field(default_factory=list)
     max_iterations: int = 50
     timeout_seconds: int = 300
-    parent_id: Optional[str] = None
+    parent_id: str | None = None
     created_at: datetime = field(default_factory=datetime.utcnow)
 
 
@@ -49,26 +49,24 @@ class AgentTask:
     id: str
     agent_id: str
     description: str
-    context: Dict[str, Any]
+    context: dict[str, Any]
     state: AgentState = AgentState.IDLE
-    result: Optional[str] = None
-    error: Optional[str] = None
-    started_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
+    result: str | None = None
+    error: str | None = None
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
 
 
 class SubAgent:
     """Running instance of a sub-agent."""
 
-    def __init__(
-        self, definition: AgentDefinition, session_id: str, tmux_executor: TmuxExecutor
-    ):
+    def __init__(self, definition: AgentDefinition, session_id: str, tmux_executor: TmuxExecutor):
         self.definition = definition
         self.session_id = session_id
         self.tmux = tmux_executor
         self.memory = SessionMemory(session_id)
         self.state = AgentState.IDLE
-        self.current_task: Optional[AgentTask] = None
+        self.current_task: AgentTask | None = None
         self.message_queue: asyncio.Queue = asyncio.Queue()
         self.iteration_count = 0
 
@@ -176,15 +174,16 @@ print(json.dumps({{"result": result}}))
         self.tmux.kill_session(self.session_id)
         self.state = AgentState.COMPLETED
 
-    def get_status(self) -> Dict[str, Any]:
+    async def get_status(self) -> dict[str, Any]:
         """Get agent status."""
+        memory_stats = await self.memory.memory.stats() if hasattr(self.memory, "memory") else {}
         return {
             "agent_id": self.definition.id,
             "session_id": self.session_id,
             "state": self.state.value,
             "current_task": self.current_task.id if self.current_task else None,
             "iteration_count": self.iteration_count,
-            "memory_stats": self.memory.memory.stats(),
+            "memory_stats": memory_stats,
         }
 
 
@@ -194,8 +193,8 @@ class AgentRegistry:
     def __init__(self, storage_path: str = "/home/aura/app/data/agents"):
         self.storage_path = Path(storage_path)
         self.storage_path.mkdir(parents=True, exist_ok=True)
-        self.definitions: Dict[str, AgentDefinition] = {}
-        self.running_agents: Dict[str, SubAgent] = {}
+        self.definitions: dict[str, AgentDefinition] = {}
+        self.running_agents: dict[str, SubAgent] = {}
         self.tmux = TmuxExecutor()
         self._load_definitions()
 
@@ -243,8 +242,8 @@ class AgentRegistry:
         description: str,
         system_prompt: str,
         model: str = "openrouter/auto",
-        tools: List[str] = None,
-        parent_id: Optional[str] = None,
+        tools: list[str] = None,
+        parent_id: str | None = None,
     ) -> AgentDefinition:
         """Register a new agent definition."""
         definition = AgentDefinition(
@@ -262,16 +261,16 @@ class AgentRegistry:
 
         return definition
 
-    def get_definition(self, agent_id: str) -> Optional[AgentDefinition]:
+    def get_definition(self, agent_id: str) -> AgentDefinition | None:
         """Get agent definition by ID."""
         return self.definitions.get(agent_id)
 
-    def list_definitions(self) -> List[AgentDefinition]:
+    def list_definitions(self) -> list[AgentDefinition]:
         """List all agent definitions."""
         return list(self.definitions.values())
 
     async def spawn_agent(
-        self, agent_id: str, task_description: str, task_context: Dict[str, Any] = None
+        self, agent_id: str, task_description: str, task_context: dict[str, Any] = None
     ) -> SubAgent:
         """Spawn a new agent instance to execute a task."""
         definition = self.get_definition(agent_id)
@@ -300,13 +299,17 @@ class AgentRegistry:
 
         return agent
 
-    def get_running_agent(self, session_id: str) -> Optional[SubAgent]:
+    def get_running_agent(self, session_id: str) -> SubAgent | None:
         """Get a running agent by session ID."""
         return self.running_agents.get(session_id)
 
-    def list_running_agents(self) -> List[Dict[str, Any]]:
+    async def list_running_agents(self) -> list[dict[str, Any]]:
         """List all running agents."""
-        return [agent.get_status() for agent in self.running_agents.values()]
+        agents = []
+        for agent in self.running_agents.values():
+            status = await agent.get_status()
+            agents.append(status)
+        return agents
 
     def kill_agent(self, session_id: str):
         """Kill a running agent."""
@@ -441,7 +444,7 @@ Quality commits over quantity.""",
 
 
 # Global registry instance
-_registry: Optional[AgentRegistry] = None
+_registry: AgentRegistry | None = None
 
 
 def get_agent_registry() -> AgentRegistry:

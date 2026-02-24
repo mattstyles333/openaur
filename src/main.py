@@ -1,22 +1,39 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import os
+from pathlib import Path
+
+# Load environment variables from .env file if it exists
+env_path = Path("/home/aura/app/.env")
+if env_path.exists():
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, value = line.split("=", 1)
+                os.environ.setdefault(key, value)
+
 from contextlib import asynccontextmanager
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from src.models.database import init_db
 from src.routes import (
-    chat,
-    packages,
-    sessions,
     actions,
+    agents,
+    chat,
+    config,
+    dashboard,
+    emails,
     heart,
     ingest,
-    openai,
     memory,
     memory_ui,
-    emails,
-    dashboard,
-    agents,
+    openai,
+    packages,
+    sessions,
+    settings,
+    websocket,
 )
-from src.models.database import init_db
 from src.services.gateway import OpenRouterGateway
 from src.services.package_manager import PackageManager
 
@@ -61,6 +78,9 @@ app.include_router(agents.router, prefix="/agents", tags=["agents"])
 app.include_router(heart.router, prefix="/heart", tags=["heart"])
 app.include_router(ingest.router, prefix="/ingest", tags=["ingest"])
 app.include_router(openai.router, prefix="/v1", tags=["openai"])
+app.include_router(settings.router, prefix="/settings", tags=["settings"])
+app.include_router(websocket.router, tags=["websocket"])
+app.include_router(config.router, prefix="/api/config", tags=["config"])
 
 
 @app.get("/health")

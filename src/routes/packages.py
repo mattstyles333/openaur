@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
-from typing import List, Optional
 
-from src.models.database import get_db, InstalledPackage
-from src.models.schemas import PackageSearchResult, PackageInstallRequest
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from src.models.database import InstalledPackage, get_db
+from src.models.schemas import PackageInstallRequest
 from src.services.package_manager import PackageManager
 
 router = APIRouter()
@@ -79,6 +79,17 @@ async def remove_package(package_name: str, db: Session = Depends(get_db)):
             db.delete(pkg)
             db.commit()
 
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/cleanup")
+async def cleanup_packages():
+    """Remove unused dependencies and clean package cache."""
+    try:
+        pm = PackageManager()
+        result = pm.cleanup_unused()
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

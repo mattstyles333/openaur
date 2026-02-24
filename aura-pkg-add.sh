@@ -28,10 +28,22 @@ if ! command -v yay &>/dev/null; then
     exit 1
 fi
 
-yay -S --noconfirm --needed --nocheck --noprogressbar \
-    --pgpfetch --pgpflags "no-check" \
+# Check if package exists in repos or AUR before installing
+if ! yay -Si "$PACKAGE" &>/dev/null && ! pacman -Si "$PACKAGE" &>/dev/null; then
+    echo "Error: Package '$PACKAGE' not found in repositories or AUR"
+    exit 1
+fi
+
+# Install and capture exit code
+yay -S --noconfirm --needed --noprogressbar \
     "$PACKAGE" 2>&1 | tee -a /tmp/aura-pkg-install.log
 
-echo "✓ $PACKAGE installed successfully"
+YAY_EXIT=${PIPESTATUS[0]}
 
-exit 0
+if [[ $YAY_EXIT -eq 0 ]]; then
+    echo "✓ $PACKAGE installed successfully"
+    exit 0
+else
+    echo "Error: Failed to install $PACKAGE (exit code: $YAY_EXIT)"
+    exit 1
+fi

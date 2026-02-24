@@ -1,7 +1,7 @@
-import yaml
 import os
-from typing import Dict, Optional, Any
 from pathlib import Path
+
+import yaml
 
 
 class YamlRegistry:
@@ -16,7 +16,7 @@ class YamlRegistry:
         self.base_path = Path(base_path).resolve()
         self.base_path.mkdir(parents=True, exist_ok=True)
 
-    def save_action(self, binary: str, tree: Dict, safety: int = 2) -> str:
+    def save_action(self, binary: str, tree: dict, safety: int = 2) -> str:
         """Save action tree to YAML file."""
         filename = f"{binary}.yaml"
         filepath = self.base_path / filename
@@ -35,7 +35,7 @@ class YamlRegistry:
 
         return str(filepath)
 
-    def load_action(self, binary: str) -> Optional[Dict]:
+    def load_action(self, binary: str) -> dict | None:
         """Load action tree from YAML file."""
         filename = f"{binary}.yaml"
         filepath = self.base_path / filename
@@ -43,7 +43,7 @@ class YamlRegistry:
         if not filepath.exists():
             return None
 
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             return yaml.safe_load(f)
 
     def list_actions(self) -> list:
@@ -52,7 +52,7 @@ class YamlRegistry:
 
         for yaml_file in self.base_path.glob("*.yaml"):
             try:
-                with open(yaml_file, "r") as f:
+                with open(yaml_file) as f:
                     data = yaml.safe_load(f)
                     if data:
                         actions.append(
@@ -68,7 +68,7 @@ class YamlRegistry:
 
         return actions
 
-    def get_tree_node(self, binary: str, path: list) -> Optional[Dict]:
+    def get_tree_node(self, binary: str, path: list) -> dict | None:
         """Get specific node from tree by path."""
         tree = self.load_action(binary)
         if not tree:
@@ -84,7 +84,7 @@ class YamlRegistry:
 
         return current
 
-    def update_action_metadata(self, binary: str, metadata: Dict) -> bool:
+    def update_action_metadata(self, binary: str, metadata: dict) -> bool:
         """Update action metadata."""
         tree = self.load_action(binary)
         if not tree:

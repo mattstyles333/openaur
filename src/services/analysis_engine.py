@@ -6,12 +6,12 @@ then quality model (openrouter/auto) for final response.
 Returns thinking/analysis visible to user in OpenWebUI.
 """
 
-from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
+from typing import Any
 
-from src.services.two_stage_processor import get_processor
-from src.services.openmemory import get_memory
 from src.services.context_manager import ContextBuilder
+from src.services.openmemory import get_memory
+from src.services.two_stage_processor import get_processor
 from src.utils.yaml_registry import YamlRegistry
 
 
@@ -19,10 +19,10 @@ from src.utils.yaml_registry import YamlRegistry
 class AnalysisResult:
     """Result of fast model analysis."""
 
-    sentiment: Dict[str, Any]
-    intent: Dict[str, Any]
-    actions: Dict[str, Any]
-    relevant_memories: List[Dict[str, Any]]
+    sentiment: dict[str, Any]
+    intent: dict[str, Any]
+    actions: dict[str, Any]
+    relevant_memories: list[dict[str, Any]]
     thinking_summary: str
 
 
@@ -80,7 +80,7 @@ class AnalysisEngine:
             thinking_summary=thinking_summary,
         )
 
-    def _get_available_tools(self, mentioned: List[str]) -> List[str]:
+    def _get_available_tools(self, mentioned: list[str]) -> list[str]:
         """Get list of available CLI tools."""
         # Common tools to check
         common_tools = [
@@ -109,8 +109,8 @@ class AnalysisEngine:
         return list(set(available))
 
     async def _suggest_actions(
-        self, user_message: str, available_tools: List[str]
-    ) -> Dict[str, Any]:
+        self, user_message: str, available_tools: list[str]
+    ) -> dict[str, Any]:
         """Suggest actions based on user intent."""
         suggestions = await self.processor.suggest_actions(user_message, available_tools)
 
@@ -122,11 +122,11 @@ class AnalysisEngine:
 
     def _build_thinking_summary(
         self,
-        sentiment: Dict[str, Any],
-        intent: Dict[str, Any],
-        actions: Dict[str, Any],
-        memories: List[Dict[str, Any]],
-        tools: List[str],
+        sentiment: dict[str, Any],
+        intent: dict[str, Any],
+        actions: dict[str, Any],
+        memories: list[dict[str, Any]],
+        tools: list[str],
     ) -> str:
         """Build human-readable thinking summary."""
         lines = ["💭 **Analysis**"]
@@ -166,7 +166,7 @@ class AnalysisEngine:
         user_message: str,
         analysis: AnalysisResult,
         session_id: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Get quality response using full context."""
         # Build enriched system prompt
         system_prompt = self._build_quality_prompt(analysis, session_id)
@@ -288,7 +288,7 @@ Respond naturally without referencing this analysis unless relevant."""
 
 
 # Singleton
-_analysis_engine: Optional[AnalysisEngine] = None
+_analysis_engine: AnalysisEngine | None = None
 
 
 def get_analysis_engine() -> AnalysisEngine:
@@ -301,7 +301,7 @@ def get_analysis_engine() -> AnalysisEngine:
 
 async def analyze_and_respond(
     user_message: str, session_id: str, use_quick_mode: bool = False, include_thinking: bool = False
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Convenience function: analyze with fast model, respond with quality model.
 
     Args:

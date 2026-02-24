@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
-from typing import List
 
-from src.models.database import get_db, ActionRegistry
-from src.models.schemas import ActionCreateRequest, ActionTreeNode
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from src.models.database import ActionRegistry, get_db
+from src.models.schemas import ActionCreateRequest
 from src.services.doc_crawler import DocCrawler
 from src.utils.yaml_registry import YamlRegistry
 

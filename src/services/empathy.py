@@ -1,6 +1,4 @@
-import os
 import re
-from typing import Dict, Optional, Tuple
 
 
 class EmpathyEngine:
@@ -69,7 +67,7 @@ class EmpathyEngine:
             "pull",
         ]
 
-    def analyze(self, message: str) -> Dict:
+    def analyze(self, message: str) -> dict:
         """Analyze message for emotional content."""
         message_lower = message.lower()
 
@@ -132,7 +130,7 @@ class EmpathyEngine:
         words = re.findall(r"\b[a-z]{4,}\b", message)
         return list(set(words))[:10]
 
-    def adapt_prompt(self, base_prompt: str, emotional_state: Dict, tools: list) -> str:
+    def adapt_prompt(self, base_prompt: str, emotional_state: dict, tools: list) -> str:
         """Adapt system prompt based on emotional state."""
         sentiment = emotional_state.get("sentiment", "neutral")
         intensity = emotional_state.get("intensity", 0.5)

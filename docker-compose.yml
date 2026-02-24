@@ -15,6 +15,7 @@ services:
       - ./actions:/home/aura/app/actions
       - openaura-data:/home/aura/app/data
       - /tmp:/tmp
+      - ./.env:/home/aura/app/.env  # Persist API key and model settings
     restart: unless-stopped
     stdin_open: true
     tty: true

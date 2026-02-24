@@ -1,7 +1,6 @@
-import subprocess
 import re
+import subprocess
 from collections import deque
-from typing import Dict, List, Optional
 
 
 class DocCrawler:
@@ -11,7 +10,7 @@ class DocCrawler:
         self.max_depth = 12
         self.visited = set()
 
-    def crawl(self, binary: str, max_depth: int = 12) -> Dict:
+    def crawl(self, binary: str, max_depth: int = 12) -> dict:
         """Crawl command documentation using BFS."""
         self.max_depth = max_depth
         self.visited = set()
@@ -112,7 +111,7 @@ class DocCrawler:
         except:
             return f"CLI tool: {binary}"
 
-    def _parse_subcommands(self, help_text: str) -> List[str]:
+    def _parse_subcommands(self, help_text: str) -> list[str]:
         """Extract subcommands from help text."""
         subcommands = []
 
@@ -174,7 +173,7 @@ class DocCrawler:
 
         return 1  # Read-only
 
-    def _parse_args(self, help_text: str) -> Dict[str, str]:
+    def _parse_args(self, help_text: str) -> dict[str, str]:
         """Parse arguments from help text."""
         args = {}
 
@@ -193,7 +192,7 @@ class DocCrawler:
         return args
 
     def _insert_into_tree(
-        self, tree: Dict, parent_chain: List[str], cmd: str, node: Dict
+        self, tree: dict, parent_chain: list[str], cmd: str, node: dict
     ):
         """Insert node into tree at correct location."""
         current = tree

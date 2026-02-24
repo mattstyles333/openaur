@@ -2,6 +2,18 @@
 	import { memoryStore, heartStore, agentsStore, sessionsStore } from '$lib/stores';
 	import { Activity, Brain, Bot, Terminal, Zap, Heart, Cpu, Clock } from 'lucide-svelte';
 
+	// Helper function to safely format dates
+	function formatDate(dateStr: string): string {
+		if (!dateStr) return 'Unknown';
+		try {
+			const date = new Date(dateStr);
+			if (isNaN(date.getTime())) return 'Unknown';
+			return date.toLocaleDateString();
+		} catch {
+			return 'Unknown';
+		}
+	}
+
 	// Memory utilization percentage
 	const memoryUtilization = $derived(
 		$memoryStore.stats ? ($memoryStore.stats.utilization * 100).toFixed(1) : '0.0'
@@ -155,15 +167,15 @@
 							</span>
 							<div class="flex-1 min-w-0">
 								<p class="text-text-primary truncate">{memory.content}</p>
-								<div class="flex items-center gap-2 mt-1">
-									{#each memory.tags.slice(0, 3) as tag}
-										<span class="text-xs text-text-secondary">#{tag}</span>
-									{/each}
+									<div class="flex items-center gap-2 mt-1">
+										{#each (memory.tags || []).slice(0, 3) as tag}
+											<span class="text-xs text-text-secondary">#{tag}</span>
+										{/each}
+									</div>
 								</div>
-							</div>
-							<span class="text-xs text-text-secondary whitespace-nowrap">
-								{new Date(memory.created_at).toLocaleDateString()}
-							</span>
+								<span class="text-xs text-text-secondary whitespace-nowrap">
+									{formatDate(memory.created_at)}
+								</span>
 						</div>
 					</div>
 				{/each}

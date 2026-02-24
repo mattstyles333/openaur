@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
-from typing import Optional
 
-from src.models.database import get_db, Session as SessionModel
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+
+from src.models.database import Session as SessionModel
+from src.models.database import get_db
 from src.models.schemas import SessionCreateRequest, SessionResponse
 from src.services.tmux_executor import TmuxExecutor
 
@@ -87,3 +88,29 @@ async def list_sessions(db: Session = Depends(get_db)):
         }
         for s in sessions
     ]
+
+
+@router.post("/{session_id}/kill")
+async def kill_session(session_id: str, db: Session = Depends(get_db)):
+    """Kill an active session."""
+    try:
+        session = db.query(SessionModel).filter(SessionModel.id == session_id).first()
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+
+        # Kill the tmux session
+        import subprocess
+        subprocess.run(
+            ["tmux", "kill-session", "-t", session.tmux_session],
+            capture_output=True
+        )
+
+        # Update database
+        session.status = "killed"
+        db.commit()
+
+        return {"success": True, "message": f"Session {session_id} killed"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

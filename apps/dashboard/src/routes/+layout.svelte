@@ -3,23 +3,19 @@
 	import { page } from '$app/stores';
 	import { Brain, Heart, Bot, Terminal, LayoutDashboard, RefreshCw, Settings, ExternalLink, Menu, X } from 'lucide-svelte';
 	import { AlertCircle } from 'lucide-svelte';
-	import { memoryStore, heartStore, agentsStore, sessionsStore, createAutoRefresh } from '$lib/stores';
+	import { memoryStore, heartStore, agentsStore, sessionsStore, wsStore } from '$lib/stores';
 
 	// Mobile menu state
 	let mobileMenuOpen = $state(false);
 
-	// Only show functional items in nav
+	// Navigation items
 	const navItems = [
 		{ path: '/', label: 'Overview', icon: LayoutDashboard },
 		{ path: '/memory', label: 'Memory', icon: Brain },
 		{ path: '/heart', label: 'Heart', icon: Heart },
-		{ path: '/config', label: 'Settings', icon: Settings }
-	];
-
-	// Hidden items (not yet functional)
-	const hiddenItems = [
-		{ path: '/sessions', label: 'Sessions', icon: Terminal },
 		{ path: '/agents', label: 'Agents', icon: Bot },
+		{ path: '/sessions', label: 'Sessions', icon: Terminal },
+		{ path: '/config', label: 'Settings', icon: Settings }
 	];
 
 	const externalLinks = [
@@ -32,21 +28,25 @@
 		$memoryStore.error || $heartStore.error || $agentsStore.error || $sessionsStore.error
 	);
 
-	// Auto-refresh all stores every 5 seconds
-	const autoRefresh = createAutoRefresh(5000);
-	
+	// Manual refresh button (HTTP fallback when WebSocket fails)
 	function refreshAll() {
-		memoryStore.refresh();
-		heartStore.refresh();
-		agentsStore.refresh();
-		sessionsStore.refresh();
+		memoryStore.refresh(false);
+		heartStore.refresh(false);
+		agentsStore.refresh(false);
+		sessionsStore.refresh(false);
 	}
 
-	// Start auto-refresh on mount
+	// WebSocket-only - no polling
 	$effect(() => {
-		refreshAll();
-		autoRefresh.start(refreshAll);
-		return () => autoRefresh.stop();
+		wsStore.connect();
+		
+		// Initial data fetch on mount
+		memoryStore.refresh(false);
+		heartStore.refresh(false);
+		agentsStore.refresh(false);
+		sessionsStore.refresh(false);
+		
+		return () => wsStore.disconnect();
 	});
 
 	let { children } = $props();
@@ -113,7 +113,7 @@
 				class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-card-hover text-text-secondary hover:text-neon-cyan transition-colors"
 			>
 				<RefreshCw size={16} />
-				<span class="text-sm">Refresh Data</span>
+				<span class="text-sm">Manual Refresh</span>
 			</button>
 		</div>
 	</aside>

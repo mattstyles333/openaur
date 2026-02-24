@@ -7,14 +7,14 @@ Enhanced with two-stage processing:
 3. Thinking/analysis visible to user in conversation
 """
 
-from fastapi import APIRouter, HTTPException
-from typing import List, Optional
-from pydantic import BaseModel
-from datetime import datetime
-import uuid
 import os
+import uuid
+from datetime import datetime
 
-from src.services.analysis_engine import analyze_and_respond, get_analysis_engine
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
+
+from src.services.analysis_engine import analyze_and_respond
 from src.services.context_manager import preload_openaura_context
 
 router = APIRouter()
@@ -30,26 +30,26 @@ class OpenAIMessage(BaseModel):
 
 class OpenAIChatRequest(BaseModel):
     model: str = "openaura/default"
-    messages: List[OpenAIMessage]
-    temperature: Optional[float] = 0.7
-    max_tokens: Optional[int] = None
+    messages: list[OpenAIMessage]
+    temperature: float | None = 0.7
+    max_tokens: int | None = None
     stream: bool = False
     # Control whether to show analysis/thinking in output
     show_thinking: bool = False
     # Force quick mode (bypass OpenRouter for simple queries)
-    quick_mode: Optional[bool] = None
+    quick_mode: bool | None = None
 
 
 class OpenAIDelta(BaseModel):
-    role: Optional[str] = None
-    content: Optional[str] = None
+    role: str | None = None
+    content: str | None = None
 
 
 class OpenAIChoice(BaseModel):
     index: int = 0
-    message: Optional[OpenAIMessage] = None
-    delta: Optional[OpenAIDelta] = None
-    finish_reason: Optional[str] = None
+    message: OpenAIMessage | None = None
+    delta: OpenAIDelta | None = None
+    finish_reason: str | None = None
 
 
 class OpenAIUsage(BaseModel):
@@ -63,7 +63,7 @@ class OpenAIChatResponse(BaseModel):
     object: str = "chat.completion"
     created: int
     model: str
-    choices: List[OpenAIChoice]
+    choices: list[OpenAIChoice]
     usage: OpenAIUsage
 
 
@@ -76,7 +76,7 @@ class OpenAIModel(BaseModel):
 
 class OpenAIModelsResponse(BaseModel):
     object: str = "list"
-    data: List[OpenAIModel]
+    data: list[OpenAIModel]
 
 
 class APIKeyRequest(BaseModel):

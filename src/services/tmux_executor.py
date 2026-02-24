@@ -1,8 +1,7 @@
-import subprocess
 import os
+import subprocess
 import uuid
 from datetime import datetime
-from typing import Dict, Optional, List
 
 
 class TmuxExecutor:
@@ -16,9 +15,9 @@ class TmuxExecutor:
         action_id: str,
         command: str,
         async_exec: bool = True,
-        cwd: Optional[str] = None,
-        env: Optional[Dict] = None,
-    ) -> Dict:
+        cwd: str | None = None,
+        env: dict | None = None,
+    ) -> dict:
         """Create a new tmux session for command execution."""
 
         # Generate unique IDs
@@ -79,7 +78,7 @@ exit $EXIT_CODE
 
         return wrapped
 
-    def get_session_status(self, tmux_session: str) -> Dict:
+    def get_session_status(self, tmux_session: str) -> dict:
         """Get session status and exit code."""
         try:
             # Check if session exists
@@ -93,7 +92,7 @@ exit $EXIT_CODE
                 status_file = f"/tmp/openaur-{session_id}.status"
 
                 if os.path.exists(status_file):
-                    with open(status_file, "r") as f:
+                    with open(status_file) as f:
                         exit_code = int(f.read().strip())
 
                     return {
@@ -143,7 +142,7 @@ exit $EXIT_CODE
         except Exception as e:
             return f"Error: {str(e)}"
 
-    def list_sessions(self) -> List[Dict]:
+    def list_sessions(self) -> list[dict]:
         """List all active tmux sessions."""
         try:
             result = subprocess.run(
