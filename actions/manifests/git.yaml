@@ -1,0 +1,12 @@
+binary: git
+binary_path: /usr/sbin/git
+safety: 2
+description: 'CLI tool: git'
+tree:
+  git:
+    description: The most similar command is
+    safety: 1
+    args: {}
+metadata:
+  version: '1.0'
+  format: openaura-v1

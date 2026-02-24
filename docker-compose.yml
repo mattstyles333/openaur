@@ -1,0 +1,74 @@
+services:
+  openaura:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openaura
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - DATABASE_URL=sqlite:////home/aura/app/data/openaura.db
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    volumes:
+      - ./actions:/home/aura/app/actions
+      - openaura-data:/home/aura/app/data
+      - /tmp:/tmp
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    networks:
+      - openaura-network
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    ports:
+      - "3000:8080"
+    environment:
+      # Connect to OpenAura's OpenAI-compatible API
+      - OPENAI_API_BASE_URL=http://openaura:8000/v1
+      - OPENAI_API_KEY=openaura-local-key
+      # WebUI configuration
+      - WEBUI_NAME=OpenAura
+      - WEBUI_URL=http://localhost:3000
+      - DEFAULT_MODELS=openaura/default
+      # Enable features
+      - ENABLE_RAG=true
+      - RAG_EMBEDDING_ENGINE=openai
+      - RAG_OPENAI_API_BASE_URL=http://openaura:8000/v1
+      - RAG_OPENAI_API_KEY=openaura-local-key
+      # Disable Ollama (we use OpenRouter via OpenAura)
+      - ENABLE_OLLAMA_API=false
+      - OLLAMA_BASE_URL=
+    volumes:
+      - open-webui-data:/app/backend/data
+    depends_on:
+      - openaura
+    restart: unless-stopped
+    networks:
+      - openaura-network
+
+  # OpenMemory Dashboard - NOT YET AVAILABLE
+  # The OpenMemory dashboard source code is not published yet.
+  # For now, use the built-in memory browser at http://localhost:8000/memory/ui
+  # openmemory-dashboard:
+  #   image: openmemory-dashboard:latest
+  #   container_name: openmemory-dashboard
+  #   ports:
+  #     - "8001:3000"
+  #   environment:
+  #     - OPENMEMORY_API_URL=http://openaura:8000/memory
+  #   depends_on:
+  #     - openaura
+  #   networks:
+  #     - openaura-network
+
+volumes:
+  openaura-data:
+  open-webui-data:
+
+networks:
+  openaura-network:
+    driver: bridge

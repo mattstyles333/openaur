@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+"""
+OpenAura CLI - Host wrapper
+This script runs the Typer CLI directly on the host
+"""
+import sys
+import os
+
+# Add the project directory to the path
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(SCRIPT_DIR, "src"))
+
+# Check if the server is running
+def check_server():
+    try:
+        import httpx
+        response = httpx.get("http://localhost:8000/health", timeout=5.0)
+        return response.status_code == 200
+    except:
+        return False
+
+if not check_server():
+    print("Error: OpenAura server is not running")
+    print("Start it with: cd {} && docker-compose up -d".format(SCRIPT_DIR))
+    sys.exit(1)
+
+# Import and run the CLI
+from cli import app
+app()
