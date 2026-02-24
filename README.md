@@ -353,10 +353,37 @@ MIT - See [LICENSE](LICENSE)
 
 ## Acknowledgments
 
+**OpenAura stands on the shoulders of giants:**
+
+### Core Stack
+- [FastAPI](https://fastapi.tiangolo.com/) - The high-performance web framework
+- [Typer](https://typer.tiangolo.com/) - CLI framework for the terminal interface
+- [Pydantic](https://docs.pydantic.dev/) - Data validation
+- [SQLAlchemy](https://www.sqlalchemy.org/) - Database toolkit
+- [Uvicorn](https://www.uvicorn.org/) - ASGI server
+
+### Terminal & UI
+- [Rich](https://github.com/Textualize/rich) - Beautiful terminal formatting
+- [Open WebUI](https://github.com/open-webui/open-webui) - Web interface companion
+
+### AI & Memory
 - [OpenRouter](https://openrouter.ai/) - Universal LLM API
-- [FastAPI](https://fastapi.tiangolo.com/) - API framework
-- [Typer](https://typer.tiangolo.com/) - CLI framework
-- [Arch Linux](https://archlinux.org/) - Best distro
+- [OpenMemory](https://github.com/yourusername/openmemory) - Cognitive memory layer
+
+### System Tools
+- [tmux](https://github.com/tmux/tmux) - Terminal multiplexer for async tasks
+- [yay](https://github.com/Jguer/yay) - AUR helper for package management
+- [Arch Linux](https://archlinux.org/) - Foundation OS
+- [Docker](https://www.docker.com/) - Container sandbox
+- [psutil](https://github.com/giampaolo/psutil) - System monitoring
+
+### Python Ecosystem
+- [httpx](https://www.python-httpx.org/) - HTTP client
+- [PyYAML](https://pyyaml.org/) - YAML parsing
+- [python-jose](https://github.com/mpdavis/python-jose) & [passlib](https://passlib.readthedocs.io/) - Security
+- [aiofiles](https://github.com/Tinche/aiofiles) - Async file operations
+
+**To all open source maintainers: thank you for sharing your work.**
 
 ---
 
