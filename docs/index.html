@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - OpenAura</title>
+    <meta name="description" content="Complete documentation for OpenAura - AI assistant with Arch Linux integration">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1793d1;
+            --primary-dark: #0d5a82;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --border: #1e293b;
+            --sidebar-width: 280px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.7;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(2, 6, 23, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary);
+        }
+        
+        /* Layout */
+        .docs-container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            position: fixed;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding: 2rem;
+            border-right: 1px solid var(--border);
+        }
+        
+        .sidebar-section {
+            margin-bottom: 2rem;
+        }
+        
+        .sidebar-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray);
+            margin-bottom: 0.75rem;
+        }
+        
+        .sidebar-links {
+            list-style: none;
+        }
+        
+        .sidebar-links li {
+            margin-bottom: 0.25rem;
+        }
+        
+        .sidebar-links a {
+            display: block;
+            padding: 0.5rem 0.75rem;
+            color: var(--gray);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .sidebar-links a:hover, .sidebar-links a.active {
+            color: var(--light);
+            background: rgba(23, 147, 209, 0.1);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 3rem;
+            max-width: 900px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--light);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        h3 {
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        h4 {
+            font-size: 1.1rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            color: var(--gray);
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Code Blocks */
+        .code-block {
+            background: #1e1e2e;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: auto;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            color: var(--light);
+            line-height: 1.6;
+            font-size: 0.875rem;
+        }
+        
+        .code-comment {
+            color: #6c7086;
+        }
+        
+        .code-string {
+            color: #a6e3a1;
+        }
+        
+        .code-keyword {
+            color: #f38ba8;
+        }
+        
+        .code-function {
+            color: #89b4fa;
+        }
+        
+        code {
+            background: rgba(23, 147, 209, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            color: var(--primary);
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: var(--dark);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--darker);
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        td {
+            color: var(--gray);
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1rem 1.5rem;
+            color: var(--gray);
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Info Boxes */
+        .info-box {
+            background: rgba(23, 147, 209, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .info-box.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-left-color: var(--accent);
+        }
+        
+        .info-box.error {
+            background: rgba(239, 68, 68, 0.1);
+            border-left-color: #ef4444;
+        }
+        
+        .info-box-title {
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Architecture Diagram */
+        .arch-diagram {
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        
+        /* Mobile */
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="../" class="logo">
+                <div class="logo-icon">🐧</div>
+                OpenAura
+            </a>
+            <ul class="nav-links">
+                <li><a href="../">Home</a></li>
+                <li><a href="./" class="active">Docs</a></li>
+                <li><a href="https://github.com/mattstyles333/openaur">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="docs-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-title">Getting Started</div>
+                <ul class="sidebar-links">
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#configuration">Configuration</a></li>
+                    <li><a href="#quickstart">Quick Start</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Core Concepts</div>
+                <ul class="sidebar-links">
+                    <li><a href="#cognitive-memory">Cognitive Memory</a></li>
+                    <li><a href="#empathy-engine">Empathy Engine</a></li>
+                    <li><a href="#action-registry">Action Registry</a></li>
+                    <li><a href="#sub-agents">Sub-Agents</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">API Reference</div>
+                <ul class="sidebar-links">
+                    <li><a href="#chat-api">Chat API</a></li>
+                    <li><a href="#memory-api">Memory API</a></li>
+                    <li><a href="#packages-api">Packages API</a></li>
+                    <li><a href="#agents-api">Agents API</a></li>
+                    <li><a href="#actions-api">Actions API</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">CLI Commands</div>
+                <ul class="sidebar-links">
+                    <li><a href="#cli-server">Server</a></li>
+                    <li><a href="#cli-chat">Chat</a></li>
+                    <li><a href="#cli-packages">Packages</a></li>
+                    <li><a href="#cli-actions">Actions</a></li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="sidebar-title">Advanced</div>
+                <ul class="sidebar-links">
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#development">Development</a></li>
+                    <li><a href="#troubleshooting">Troubleshooting</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Documentation</h1>
+            <p>Welcome to the OpenAura documentation. Here you'll find everything you need to get started, from installation to advanced usage.</p>
+
+            <h2 id="installation">Installation</h2>
+            <p>OpenAura runs in Docker containers. This is the recommended and only supported installation method.</p>
+            
+            <h3>Prerequisites</h3>
+            <ul>
+                <li>Docker Engine 20.10+</li>
+                <li>Docker Compose 2.0+</li>
+                <li>OpenRouter API key (get one free at <a href="https://openrouter.ai/keys">openrouter.ai</a>)</li>
+            </ul>
+            
+            <h3>Step-by-Step Installation</h3>
+            
+            <div class="code-block">
+                <pre><span class="code-comment"># 1. Clone the repository</span>
+git clone https://github.com/mattstyles333/openaur.git
+cd openaur
+
+<span class="code-comment"># 2. Copy environment template</span>
+cp .env.example .env
+
+<span class="code-comment"># 3. Edit .env and add your API key</span>
+<span class="code-comment"># OPENROUTER_API_KEY=your_key_here</span>
+
+<span class="code-comment"># 4. Build and start containers</span>
+docker-compose up -d
+
+<span class="code-comment"># 5. Verify installation</span>
+make test
+<span class="code-comment"># Should show: {"status": "healthy", ...}</span></pre>
+            </div>
+
+            <h2 id="configuration">Configuration</h2>
+            <p>Configuration is handled through environment variables in the <code>.env</code> file.</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Variable</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>OPENROUTER_API_KEY</code></td>
+                        <td>Yes</td>
+                        <td>Your OpenRouter API key</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><code>DEBUG</code></td>
+                        <td>No</td>
+                        <td>Enable debug logging</td>
+                        <td>false</td>
+                    </tr>
+                    <tr>
+                        <td><code>OPENMEMORY_DB_PATH</code></td>
+                        <td>No</td>
+                        <td>Path to memory database</td>
+                        <td>./data/openmemory.db</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="quickstart">Quick Start</h2>
+            
+            <h3>1. Register CLI Tools</h3>
+            <p>OpenAura can learn about your CLI tools and their documentation:</p>
+            
+            <div class="code-block">
+                <pre><span class="code-comment"># Crawl git's documentation</span>
+make crawl BINARY=git
+
+<span class="code-comment"># Now OpenAura knows every git command</span>
+make chat MSG="How do I undo my last 3 commits safely?"</pre>
+            </div>
+            
+            <h3>2. Search and Install Packages</h3>
+            
+            <div class="code-block">
+                <pre><span class="code-comment"># Search Arch repos + AUR</span>
+make search QUERY=docker
+
+<span class="code-comment"># Install from AUR</span>
+make install PACKAGE=neovim-git</pre>
+            </div>
+            
+            <h3>3. Interactive Chat</h3>
+            
+            <div class="code-block">
+                <pre><span class="code-comment"># One-shot chat</span>
+make chat MSG="What's installed on my system?"
+
+<span class="code-comment"># Or use the CLI directly</span>
+openaur chat</pre>
+            </div>
+
+            <h2 id="cognitive-memory">Cognitive Memory</h2>
+            <p>OpenAura uses OpenMemory to persist context across sessions. Unlike other AI assistants that forget everything when you close the tab, OpenAura remembers:</p>
+            
+            <ul>
+                <li><strong>Conversations</strong> - Context from previous chats</li>
+                <li><strong>Preferences</strong> - How you like things configured</li>
+                <li><strong>System State</strong> - What packages are installed, configurations</li>
+                <li><strong>Actions</strong> - CLI tools you've registered and their usage patterns</li>
+                <li><strong>Relationships</strong> - Connections between different tools and concepts</li>
+            </ul>
+            
+            <h3>Memory API</h3>
+            
+            <div class="code-block">
+                <pre><span class="code-comment"># Get memory stats</span>
+curl http://localhost:8000/memory/stats
+
+<span class="code-comment"># Query memories</span>
+curl -X POST http://localhost:8000/memory/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "nginx configuration"}'
+
+<span class="code-comment"># Add a memory</span>
+curl -X POST http://localhost:8000/memory/add \
+  -H "Content-Type: application/json" \
+  -d '{
+    "content": "User prefers vim over emacs",
+    "category": "preferences",
+    "tags": ["editor", "vim"]
+  }'</pre>
+            </div>
+
+            <h2 id="empathy-engine">Empathy Engine</h2>
+            <p>OpenAura analyzes your sentiment and adapts its tone accordingly. This makes interactions feel more natural and supportive.</p>
+            
+            <h3>How It Works</h3>
+            <p>When you send a message, OpenAura:</p>
+            <ol>
+                <li>Analyzes sentiment (positive, negative, neutral)</li>
+                <li>Detects emotions (frustrated, excited, confused, etc.)</li>
+                <li>Adjusts response tone to match your emotional state</li>
+            </ol>
+            
+            <h3>Example Responses</h3>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Your State</th>
+                        <th>OpenAura Response Style</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Frustrated</strong></td>
+                        <td>Calm, step-by-step guidance with clear explanations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Excited</strong></td>
+                        <td>Enthusiastic, matches your energy with encouragement</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Confused</strong></td>
+                        <td>Patient, simplifies concepts, offers examples</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Focused</strong></td>
+                        <td>Concise, technical, gets straight to the point</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Check Empathy Status</h3>
+            <div class="code-block">
+                <pre>curl http://localhost:8000/heart
+<span class="code-comment"># Returns: {"mood": "focused", "tone": "technical", "empathy_level": 0.8}</span></pre>
+            </div>
+
+            <h2 id="action-registry">Action Registry</h2>
+            <p>The Action Registry is where OpenAura stores information about CLI tools. When you "crawl" a binary, OpenAura:</p>
+            <ol>
+                <li>Reads the man page</li>
+                <li>Runs <code>--help</code> and <code>-h</code></li>
+                <li>Explores subcommands with BFS (breadth-first search)</li>
+                <li>Stores all documentation in YAML format</li>
+            </ol>
+            
+            <h3>Registering Tools</h3>
+            <div class="code-block">
+                <pre><span class="code-comment"># Using make</span>
+make crawl BINARY=docker
+make crawl BINARY=kubectl
+make crawl BINARY=ffmpeg
+
+<span class="code-comment"># Using API directly</span>
+curl -X POST http://localhost:8000/actions/crawl \
+  -H "Content-Type: application/json" \
+  -d '{"binary": "git"}'</pre>
+            </div>
+            
+            <h3>Listing Registered Actions</h3>
+            <div class="code-block">
+                <pre>curl http://localhost:8000/actions/
+<span class="code-comment"># Returns list of all registered CLI tools</span></pre>
+            </div>
+
+            <h2 id="sub-agents">Sub-Agents</h2>
+            <p>Sub-agents are specialized AI instances that run in isolated tmux sessions. Each agent has its own context, memory, and tool access.</p>
+            
+            <h3>Use Cases</h3>
+            <ul>
+                <li>Long-running tasks that shouldn't block the main assistant</li>
+                <li>Parallel processing of multiple requests</li>
+                <li>Isolated experimentation without affecting main context</li>
+                <li>Specialized agents for different domains (security, DevOps, etc.)</li>
+            </ul>
+            
+            <h3>Registering an Agent</h3>
+            <div class="code-block">
+                <pre>curl -X POST http://localhost:8000/agents/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": "security-auditor",
+    "name": "Security Auditor",
+    "description": "Specialized in security analysis",
+    "system_prompt": "You are a security expert. Focus on vulnerabilities...",
+    "model": "openrouter/auto",
+    "tools": ["nmap", "openssl", "gpg"]
+  }'</pre>
+            </div>
+            
+            <h3>Spawning an Agent</h3>
+            <div class="code-block">
+                <pre>curl -X POST http://localhost:8000/agents/spawn \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_id": "security-auditor",
+    "task_description": "Audit nginx configuration for security issues",
+    "task_context": {"config_path": "/etc/nginx/nginx.conf"}
+  }'</pre>
+            </div>
+
+            <h2 id="chat-api">Chat API</h2>
+            <p>OpenAura provides both OpenAI-compatible endpoints and enhanced chat endpoints.</p>
+            
+            <h3>OpenAI-Compatible</h3>
+            <div class="code-block">
+                <pre>curl -X POST http://localhost:8000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+  -d '{
+    "model": "openrouter/auto",
+    "messages": [
+      {"role": "user", "content": "Hello!"}
+    ]
+  }'</pre>
+            </div>
+            
+            <h3>Enhanced Chat (with Memory)</h3>
+            <div class="code-block">
+                <pre>curl -X POST http://localhost:8000/chat \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "What's the status of my system?",
+    "session_id": "optional-session-id",
+    "include_memory": true,
+    "empathy_mode": true
+  }'</pre>
+            </div>
+
+            <h2 id="memory-api">Memory API</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>/memory/stats</code></td>
+                        <td>GET</td>
+                        <td>Get memory statistics</td>
+                    </tr>
+                    <tr>
+                        <td><code>/memory/query</code></td>
+                        <td>POST</td>
+                        <td>Query memories by content</td>
+                    </tr>
+                    <tr>
+                        <td><code>/memory/add</code></td>
+                        <td>POST</td>
+                        <td>Add a new memory</td>
+                    </tr>
+                    <tr>
+                        <td><code>/memory/ui</code></td>
+                        <td>GET</td>
+                        <td>Memory visualization</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="packages-api">Packages API</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>/packages/search?q={query}</code></td>
+                        <td>GET</td>
+                        <td>Search official repos + AUR</td>
+                    </tr>
+                    <tr>
+                        <td><code>/packages/install</code></td>
+                        <td>POST</td>
+                        <td>Install a package</td>
+                    </tr>
+                    <tr>
+                        <td><code>/packages/list</code></td>
+                        <td>GET</td>
+                        <td>List installed packages</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="agents-api">Agents API</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>/agents/register</code></td>
+                        <td>POST</td>
+                        <td>Register a new agent definition</td>
+                    </tr>
+                    <tr>
+                        <td><code>/agents/spawn</code></td>
+                        <td>POST</td>
+                        <td>Spawn agent for a task</td>
+                    </tr>
+                    <tr>
+                        <td><code>/agents/list</code></td>
+                        <td>GET</td>
+                        <td>List all agents</td>
+                    </tr>
+                    <tr>
+                        <td><code>/agents/{id}/status</code></td>
+                        <td>GET</td>
+                        <td>Get agent status</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="actions-api">Actions API</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>/actions/</code></td>
+                        <td>GET</td>
+                        <td>List all registered actions</td>
+                    </tr>
+                    <tr>
+                        <td><code>/actions/crawl</code></td>
+                        <td>POST</td>
+                        <td>Crawl a binary's documentation</td>
+                    </tr>
+                    <tr>
+                        <td><code>/actions/{name}</code></td>
+                        <td>GET</td>
+                        <td>Get specific action details</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 id="cli-server">CLI: Server Commands</h2>
+            <div class="code-block">
+                <pre><span class="code-comment"># Start OpenAura containers</span>
+openaur server start
+
+<span class="code-comment"># Stop containers</span>
+openaur server stop
+
+<span class="code-comment"># View logs</span>
+openaur server logs
+
+<span class="code-comment"># Check status</span>
+openaur server status</pre>
+            </div>
+
+            <h2 id="cli-chat">CLI: Chat</h2>
+            <div class="code-block">
+                <pre><span class="code-comment"># Interactive chat mode</span>
+openaur chat
+
+<span class="code-comment"># One-shot message</span>
+openaur chat "How do I configure nginx with SSL?"</pre>
+            </div>
+
+            <h2 id="cli-packages">CLI: Packages</h2>
+            <div class="code-block">
+                <pre><span class="code-comment"># Search packages</span>
+openaur packages search neovim
+
+<span class="code-comment"># Install a package</span>
+openaur packages install neovim-git
+
+<span class="code-comment"># List installed</span>
+openaur packages list</pre>
+            </div>
+
+            <h2 id="cli-actions">CLI: Actions</h2>
+            <div class="code-block">
+                <pre><span class="code-comment"># List registered actions</span>
+openaur actions list
+
+<span class="code-comment"># Crawl a new binary</span>
+openaur actions crawl kubectl
+
+<span class="code-comment"># Show action details</span>
+openaur actions show docker</pre>
+            </div>
+
+            <h2 id="architecture">Architecture</h2>
+            <p>OpenAura follows a modular microservices architecture built on Arch Linux.</p>
+            
+            <div class="arch-diagram">
+<pre>┌─────────────────────────────────────────────────────────────────┐
+│                         OpenAura                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   ┌──────────┐    ┌───────────┐    ┌──────────────────────┐   │
+│   │  Client  │───▶│  FastAPI  │───▶│    LLM Gateway       │   │
+│   │ (CLI/UI) │    │  Gateway  │    │   (OpenRouter)       │   │
+│   └──────────┘    └───────────┘    └──────────────────────┘   │
+│                            │                                     │
+│        ┌───────────────────┼───────────────────┐                 │
+│        ▼                   ▼                   ▼                 │
+│   ┌──────────┐      ┌──────────┐      ┌──────────────┐       │
+│   │ OpenMemory│      │  Agents  │      │ Action Reg     │       │
+│   │ (SQLite)  │      │ Service  │      │  (YAML)        │       │
+│   └──────────┘      └──────────┘      └──────────────┘       │
+│                            │                                     │
+│        ┌───────────────────┼───────────────────┐                 │
+│        ▼                   ▼                   ▼                 │
+│   ┌──────────┐      ┌──────────┐      ┌──────────────┐       │
+│   │ Empathy  │      │  Email   │      │ Arch Linux   │       │
+│   │ Engine   │      │ Service  │      │ + AUR (yay)  │       │
+│   └──────────┘      └──────────┘      └──────────────┘       │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</pre>
+            </div>
+            
+            <h3>Key Components</h3>
+            <ul>
+                <li><strong>FastAPI Gateway</strong> - REST API with async request handling</li>
+                <li><strong>OpenMemory</strong> - Cognitive memory layer with SQLite persistence</li>
+                <li><strong>Empathy Engine</strong> - Real-time sentiment analysis</li>
+                <li><strong>Agent Service</strong> - Sub-agent management and tmux execution</li>
+                <li><strong>Package Manager</strong> - Arch/AUR integration via yay</li>
+                <li><strong>Action Registry</strong> - YAML-based CLI tool documentation</li>
+            </ul>
+
+            <h2 id="development">Development</h2>
+            
+            <h3>Building Locally</h3>
+            <div class="code-block">
+                <pre><span class="code-comment"># Build containers</span>
+make build
+
+<span class="code-comment"># Run with attached logs</span>
+make run-logs
+
+<span class="code-comment"># Shell into container</span>
+make shell
+
+<span class="code-comment"># View logs</span>
+make logs
+
+<span class="code-comment"># Reset database</span>
+make reset-db</pre>
+            </div>
+            
+            <h3>Code Style</h3>
+            <p>See <a href="https://github.com/mattstyles333/openaur/blob/master/AGENTS.md">AGENTS.md</a> for detailed code style guidelines. Quick summary:</p>
+            <ul>
+                <li>Use <code>ruff</code> for linting and formatting</li>
+                <li>Absolute imports only (<code>from src.models...</code>)</li>
+                <li>Type hints on all public functions</li>
+                <li>Max 100 characters per line</li>
+            </ul>
+
+            <h2 id="troubleshooting">Troubleshooting</h2>
+            
+            <h3>Container Won't Start</h3>
+            <div class="info-box">
+                <div class="info-box-title">Check Logs</div>
+                <p><code>docker-compose logs</code> - Look for API key errors or port conflicts</p>
+            </div>
+            
+            <h3>API Connection Refused</h3>
+            <div class="info-box">
+                <div class="info-box-title">Verify Container Status</div>
+                <p><code>docker-compose ps</code> - Ensure the openaura container is running</p>
+            </div>
+            
+            <h3>Permission Denied (Package Install)</h3>
+            <div class="info-box">
+                <div class="info-box-title">Container Permissions</div>
+                <p>Some AUR packages require compilation. Ensure your Docker daemon has sufficient resources allocated.</p>
+            </div>
+
+            <div style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                <p style="text-align: center; color: var(--gray);">
+                    Still have questions? <a href="https://github.com/mattstyles333/openaur/discussions">Join the discussion</a> or <a href="https://github.com/mattstyles333/openaur/issues">open an issue</a>.
+                </p>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

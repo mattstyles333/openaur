@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAura - AI That Remembers, Understands, and Acts</title>
+    <meta name="description" content="The first personal AI assistant with Arch Linux integration, emotional intelligence, and cognitive memory.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1793d1;
+            --primary-dark: #0d5a82;
+            --secondary: #7c3aed;
+            --accent: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --border: #1e293b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 2rem;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--light);
+        }
+        
+        .nav-links .highlight {
+            color: var(--accent);
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at top, rgba(23, 147, 209, 0.15), transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(124, 58, 237, 0.1), transparent 50%);
+            pointer-events: none;
+        }
+        
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--light) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-content .tagline {
+            font-size: 1.5rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+        
+        .hero-content .description {
+            font-size: 1.125rem;
+            color: var(--gray);
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+        
+        .cta-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--light);
+            border: 2px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        /* Terminal Demo */
+        .terminal {
+            background: #1e1e2e;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+        }
+        
+        .terminal-header {
+            background: #181825;
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .terminal-dot.red { background: #f38ba8; }
+        .terminal-dot.yellow { background: #f9e2af; }
+        .terminal-dot.green { background: #a6e3a1; }
+        
+        .terminal-body {
+            padding: 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        
+        .terminal-line {
+            margin-bottom: 0.5rem;
+        }
+        
+        .terminal-prompt {
+            color: var(--primary);
+        }
+        
+        .terminal-command {
+            color: var(--light);
+        }
+        
+        .terminal-output {
+            color: var(--gray);
+            margin-left: 1.5rem;
+        }
+        
+        .terminal-highlight {
+            color: #a6e3a1;
+        }
+        
+        .terminal-accent {
+            color: var(--accent);
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: var(--dark);
+        }
+        
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--light), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-header p {
+            color: var(--gray);
+            font-size: 1.25rem;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--darker);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--light);
+        }
+        
+        .feature-card p {
+            color: var(--gray);
+            font-size: 0.95rem;
+        }
+        
+        /* Comparison Table */
+        .comparison {
+            padding: 6rem 2rem;
+        }
+        
+        .comparison-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--dark);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--darker);
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        td {
+            color: var(--gray);
+        }
+        
+        .feature-name {
+            color: var(--light);
+            font-weight: 500;
+        }
+        
+        .check { color: #22c55e; }
+        .cross { color: #ef4444; }
+        .highlight-row td {
+            background: rgba(23, 147, 209, 0.1);
+        }
+        
+        /* Quick Start */
+        .quickstart {
+            padding: 6rem 2rem;
+            background: var(--dark);
+        }
+        
+        .quickstart-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .code-block {
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+            border: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: auto;
+        }
+        
+        .code-block pre {
+            margin: 0;
+            color: var(--light);
+            line-height: 1.6;
+        }
+        
+        .code-comment {
+            color: #6c7086;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+        
+        footer p {
+            color: var(--gray);
+        }
+        
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 968px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="./" class="logo">
+                <div class="logo-icon">🐧</div>
+                OpenAura
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#quickstart">Quick Start</a></li>
+                <li><a href="./docs/" class="highlight">Documentation</a></li>
+                <li><a href="https://github.com/mattstyles333/openaur">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1>OpenAura</h1>
+                <p class="tagline">AI That Remembers, Understands, and Acts</p>
+                <p class="description">
+                    The first personal AI assistant with Arch Linux integration, 
+                    emotional intelligence, and cognitive memory. Your AI that doesn't 
+                    forget, adapts to your mood, and can actually do things on your system.
+                </p>
+                <div class="cta-group">
+                    <a href="#quickstart" class="btn btn-primary">Get Started →</a>
+                    <a href="https://github.com/mattstyles333/openaur" class="btn btn-secondary">⭐ Star on GitHub</a>
+                </div>
+            </div>
+            <div class="terminal">
+                <div class="terminal-header">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot green"></div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span> 
+                        <span class="terminal-command">docker-compose up -d</span>
+                    </div>
+                    <div class="terminal-line terminal-output">🚀 OpenAura initialized</div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span> 
+                        <span class="terminal-command">openaur chat</span>
+                    </div>
+                    <div class="terminal-line terminal-output">You: My nginx is broken after the update</div>
+                    <div class="terminal-line terminal-highlight">OpenAura: I see you're frustrated. Let me help...</div>
+                    <div class="terminal-line terminal-output">
+                        🔍 Found: nginx 1.25.3 installed<br>
+                        ⚠️  Error in config: worker_connections exceeds limit<br>
+                        <span class="terminal-accent">Shall I apply the fix? [Y/n]</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="features-container">
+            <div class="section-header">
+                <h2>Why OpenAura?</h2>
+                <p>Unlike other AI assistants that forget everything when you close the tab</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Cognitive Memory</h3>
+                    <p>Remembers conversations across sessions, your preferences, system state, and registered CLI tools using OpenMemory + SQLite.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Empathy Engine</h3>
+                    <p>Analyzes your sentiment and adapts its tone. Frustrated? It offers step-by-step guidance. Excited? It matches your energy.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🐧</div>
+                    <h3>Arch Linux Native</h3>
+                    <p>First AI assistant built for Arch users. AUR support via yay, pacman integration, and system-aware operations.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3>Action Registry</h3>
+                    <p>Auto-discover and register CLI tools with deep documentation crawling. OpenAura learns your entire toolchain.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Async Execution</h3>
+                    <p>Tmux-based non-blocking command execution. Run long tasks in the background while continuing your conversation.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>OpenAI Compatible</h3>
+                    <p>Drop-in replacement for OpenAI API endpoints. Use with any OpenAI-compatible client or tool.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="comparison">
+        <div class="comparison-container">
+            <div class="section-header">
+                <h2>Compare with Others</h2>
+                <p>See how OpenAura stacks up against the competition</p>
+            </div>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>OpenAura</th>
+                            <th>ChatGPT</th>
+                            <th>Claude</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="highlight-row">
+                            <td class="feature-name">Cognitive Memory</td>
+                            <td class="check">✓ Persistent</td>
+                            <td class="cross">✗ Per-session only</td>
+                            <td class="cross">✗ Limited</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td class="feature-name">Emotional Intelligence</td>
+                            <td class="check">✓ Empathy engine</td>
+                            <td class="cross">✗ No</td>
+                            <td class="cross">✗ No</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td class="feature-name">System Integration</td>
+                            <td class="check">✓ Arch Linux native</td>
+                            <td class="cross">✗ Cloud-only</td>
+                            <td class="cross">✗ Cloud-only</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Package Management</td>
+                            <td class="check">✓ AUR + official</td>
+                            <td class="cross">✗ N/A</td>
+                            <td class="cross">✗ N/A</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Action Registry</td>
+                            <td class="check">✓ Auto-discover CLI</td>
+                            <td class="cross">✗ No</td>
+                            <td class="cross">✗ No</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Self-Hosted</td>
+                            <td class="check">✓ Local data</td>
+                            <td class="cross">✗ Cloud</td>
+                            <td class="cross">✗ Cloud</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">OpenAI Compatible</td>
+                            <td class="check">✓ Drop-in API</td>
+                            <td class="cross">✗ N/A</td>
+                            <td class="cross">✗ N/A</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section id="quickstart" class="quickstart">
+        <div class="quickstart-container">
+            <div class="section-header">
+                <h2>One-Line Setup</h2>
+                <p>Get OpenAura running in under 30 seconds</p>
+            </div>
+            
+            <div class="code-block">
+                <pre><span class="code-comment"># 1. Clone the repo</span>
+git clone https://github.com/mattstyles333/openaur.git
+cd openaur
+
+<span class="code-comment"># 2. Set your API key (get free at openrouter.ai)</span>
+cp .env.example .env
+<span class="code-comment"># Edit .env: OPENROUTER_API_KEY=your_key_here</span>
+
+<span class="code-comment"># 3. Start OpenAura</span>
+docker-compose up -d
+
+<span class="code-comment"># 4. Test it</span>
+make test
+<span class="code-comment"># ✅ Health check passed</span>
+
+<span class="code-comment"># 5. First chat</span>
+make chat MSG="What can you help me with?"</pre>
+            </div>
+            
+            <div class="cta-group" style="justify-content: center;">
+                <a href="./docs/" class="btn btn-primary">Read Documentation →</a>
+                <a href="https://github.com/mattstyles333/openaur/blob/master/CHANGELOG.md" class="btn btn-secondary">View Changelog</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            OpenAura is <a href="https://github.com/mattstyles333/openaur">open source</a> 
+            under the MIT License · Made with ❤️ for Arch Linux users
+        </p>
+        <p style="margin-top: 1rem;">
+            <a href="./docs/">Documentation</a> · 
+            <a href="https://github.com/mattstyles333/openaur/issues">Report Bugs</a> · 
+            <a href="https://github.com/mattstyles333/openaur/discussions">Discussions</a>
+        </p>
+    </footer>
+</body>
+</html>
