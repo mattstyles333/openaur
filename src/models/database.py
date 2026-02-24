@@ -21,7 +21,14 @@ os.makedirs(data_dir, exist_ok=True)
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{data_dir}/openaura.db")
 
 Base = declarative_base()
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False},
+    pool_size=20,
+    max_overflow=30,
+    pool_recycle=3600,
+    pool_pre_ping=True,
+)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
