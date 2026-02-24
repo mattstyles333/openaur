@@ -78,6 +78,14 @@ class OpenMemory:
         min_importance: float = 0.0,
     ) -> List[Memory]:
         """Retrieve relevant memories."""
+        # Handle wildcard - return all recent memories
+        if query == "*":
+            results = sorted(self.short_term, key=lambda m: m.last_accessed, reverse=True)[:limit]
+            for memory in results:
+                memory.last_accessed = datetime.utcnow()
+                memory.access_count += 1
+            return results
+
         # Simple keyword-based retrieval (can be enhanced with embeddings)
         query_terms = set(query.lower().split())
 
@@ -115,14 +123,10 @@ class OpenMemory:
 
         return results
 
-    def get_context_window(
-        self, current_query: str, window_size: int = 5
-    ) -> List[Memory]:
+    def get_context_window(self, current_query: str, window_size: int = 5) -> List[Memory]:
         """Get recent context for the current conversation."""
         # Get most recent memories plus relevant ones
-        recent = sorted(self.short_term, key=lambda m: m.last_accessed, reverse=True)[
-            :window_size
-        ]
+        recent = sorted(self.short_term, key=lambda m: m.last_accessed, reverse=True)[:window_size]
 
         # Get relevant memories
         relevant = self.retrieve(current_query, limit=window_size)
@@ -173,9 +177,7 @@ class OpenMemory:
     def clear(self, memory_type: Optional[str] = None):
         """Clear memories, optionally by type."""
         if memory_type:
-            self.short_term = [
-                m for m in self.short_term if m.memory_type != memory_type
-            ]
+            self.short_term = [m for m in self.short_term if m.memory_type != memory_type]
         else:
             self.short_term = []
 
@@ -229,9 +231,7 @@ class SessionMemory:
 
         # Store important messages as memories
         if role == "user":
-            self.memory.store(
-                content=content, memory_type="user_query", tags=["conversation"]
-            )
+            self.memory.store(content=content, memory_type="user_query", tags=["conversation"])
         elif role == "assistant":
             self.memory.store(
                 content=content, memory_type="assistant_response", tags=["conversation"]

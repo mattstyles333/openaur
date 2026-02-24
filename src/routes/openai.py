@@ -14,7 +14,7 @@ from datetime import datetime
 import uuid
 import os
 
-from src.services.analysis_engine import analyze_and_respond
+from src.services.analysis_engine import analyze_and_respond, get_analysis_engine
 from src.services.context_manager import preload_openaura_context
 
 router = APIRouter()
@@ -23,16 +23,6 @@ router = APIRouter()
 _context_preloaded = False
 
 
-def ensure_context_loaded():
-    """Ensure OpenAura context is preloaded in memory."""
-    global _context_preloaded
-    if not _context_preloaded:
-        count = preload_openaura_context()
-        print(f"✓ Pre-loaded {count} context items into OpenMemory")
-        _context_preloaded = True
-
-
-# OpenAI-compatible models
 class OpenAIMessage(BaseModel):
     role: str
     content: str
@@ -85,6 +75,25 @@ class OpenAIModelsResponse(BaseModel):
     data: List[OpenAIModel]
 
 
+class APIKeyRequest(BaseModel):
+    api_key: str
+
+
+def has_valid_api_key() -> bool:
+    """Check if OpenRouter API key is configured."""
+    api_key = os.getenv("OPENROUTER_API_KEY", "")
+    return bool(api_key and api_key != "your_openrouter_api_key_here" and len(api_key) > 20)
+
+
+def ensure_context_loaded():
+    """Ensure OpenAura context is preloaded in memory."""
+    global _context_preloaded
+    if not _context_preloaded:
+        count = preload_openaura_context()
+        print(f"✓ Pre-loaded {count} context items into OpenMemory")
+        _context_preloaded = True
+
+
 @router.get("/models")
 async def list_openai_models() -> OpenAIModelsResponse:
     """List available models in OpenAI-compatible format."""
@@ -106,6 +115,26 @@ async def list_openai_models() -> OpenAIModelsResponse:
     )
 
 
+@router.post("/config/api-key")
+async def save_api_key(request: APIKeyRequest):
+    """Save OpenRouter API key to environment."""
+    if not request.api_key or len(request.api_key) < 20:
+        raise HTTPException(status_code=400, detail="Invalid API key format")
+
+    # Update environment variable
+    os.environ["OPENROUTER_API_KEY"] = request.api_key
+
+    # Reinitialize the analysis engine with new key
+    from src.services.two_stage_processor import get_processor
+
+    processor = get_processor()
+    processor.api_key = request.api_key
+    processor.headers["Authorization"] = f"Bearer {request.api_key}"
+    processor.has_valid_api_key = True
+
+    return {"status": "success", "message": "API key saved successfully"}
+
+
 @router.post("/chat/completions")
 async def openai_chat(request: OpenAIChatRequest) -> OpenAIChatResponse:
     """OpenAI-compatible chat with two-stage processing and visible thinking."""
@@ -121,6 +150,42 @@ async def openai_chat(request: OpenAIChatRequest) -> OpenAIChatResponse:
 
         if not user_message:
             raise HTTPException(status_code=400, detail="No user message found")
+
+        # Check if API key is configured
+        if not has_valid_api_key():
+            # Return helpful message asking for API key
+            setup_message = """⚠️ **OpenRouter API Key Required**
+
+To use OpenAura's AI features, you need to configure your OpenRouter API key.
+
+**How to get an API key:**
+1. Visit https://openrouter.ai/keys
+2. Create a free account
+3. Generate an API key
+4. Return here and enter it
+
+**Your API key will be used for:**
+- Fast sentiment/intent analysis
+- Quality AI responses
+- Memory processing
+
+Please enter your API key to continue."""
+
+            choices = [
+                OpenAIChoice(
+                    index=0,
+                    message=OpenAIMessage(role="assistant", content=setup_message),
+                    finish_reason="stop",
+                )
+            ]
+
+            return OpenAIChatResponse(
+                id=f"chatcmpl-{uuid.uuid4().hex[:8]}",
+                created=int(datetime.utcnow().timestamp()),
+                model=request.model,
+                choices=choices,
+                usage=OpenAIUsage(),
+            )
 
         # Generate session ID
         session_id = f"session_{os.urandom(4).hex()}"

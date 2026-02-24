@@ -32,9 +32,20 @@ class TwoStageProcessor:
             "HTTP-Referer": "https://openaura.local",
             "X-Title": "OpenAura",
         }
+        # Check if API key is valid (not placeholder)
+        self.has_valid_api_key = (
+            self.api_key
+            and self.api_key != "your_openrouter_api_key_here"
+            and len(self.api_key) > 20
+        )
 
     async def _call_fast(self, system_prompt: str, user_message: str) -> str:
         """Call fast model for quick analysis."""
+        # Skip if no valid API key - return generic response
+        if not self.has_valid_api_key:
+            # Return basic analysis based on simple heuristics
+            return self._fallback_analysis(system_prompt, user_message)
+
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},
@@ -47,20 +58,40 @@ class TwoStageProcessor:
             "temperature": 0.3,  # Lower temp for more consistent analysis
         }
 
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                f"{self.base_url}/chat/completions",
-                headers=self.headers,
-                json=payload,
-                timeout=30.0,
-            )
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{self.base_url}/chat/completions",
+                    headers=self.headers,
+                    json=payload,
+                    timeout=30.0,
+                )
 
-            if response.status_code != 200:
-                print(f"Fast model error: {response.text}")
-                return "{}"  # Return empty JSON on error
+                if response.status_code != 200:
+                    print(f"Fast model error: {response.text}")
+                    return self._fallback_analysis(system_prompt, user_message)
 
-            data = response.json()
-            return data["choices"][0]["message"]["content"]
+                data = response.json()
+                return data["choices"][0]["message"]["content"]
+        except Exception as e:
+            print(f"Fast model exception: {e}")
+            return self._fallback_analysis(system_prompt, user_message)
+
+    def _fallback_analysis(self, system_prompt: str, user_message: str) -> str:
+        """Provide basic analysis without API call."""
+        msg_lower = user_message.lower()
+
+        # Simple keyword-based intent detection
+        if any(word in msg_lower for word in ["install", "package", "apt", "yay", "pacman"]):
+            return '{"intent": "package", "needs_action": true, "needs_package": true, "needs_memory": false, "tools_mentioned": ["pacman", "yay"], "confidence": 0.7}'
+        elif any(
+            word in msg_lower for word in ["run", "execute", "command", "git", "docker", "build"]
+        ):
+            return '{"intent": "action", "needs_action": true, "needs_package": false, "needs_memory": false, "tools_mentioned": [], "confidence": 0.7}'
+        elif any(word in msg_lower for word in ["remember", "previous", "before", "said"]):
+            return '{"intent": "memory", "needs_action": false, "needs_package": false, "needs_memory": true, "tools_mentioned": [], "confidence": 0.6}'
+        else:
+            return '{"intent": "chat", "needs_action": false, "needs_package": false, "needs_memory": false, "tools_mentioned": [], "confidence": 0.9}'
 
     async def analyze_intent(self, user_message: str) -> Dict[str, Any]:
         """Analyze user intent using fast model."""
