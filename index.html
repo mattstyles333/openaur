@@ -547,69 +547,75 @@
         </div>
     </section>
 
-    <!-- Comparison Table -->
+    <!-- Comparison Section -->
     <section class="comparison">
         <div class="comparison-container">
             <div class="section-header">
-                <h2>Compare with Others</h2>
-                <p>See how OpenAura stacks up against the competition</p>
+                <h2>Compared to OpenClaw</h2>
+                <p>OpenClaw pioneered local-first AI agents—OpenAura extends that vision</p>
             </div>
             
             <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
-                            <th>Feature</th>
+                            <th>Capability</th>
+                            <th>OpenClaw</th>
                             <th>OpenAura</th>
-                            <th>ChatGPT</th>
-                            <th>Claude</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td class="feature-name">Philosophy</td>
+                            <td>Local-first AI agent</td>
+                            <td class="check">Personal AI with memory + Linux tools</td>
+                        </tr>
                         <tr class="highlight-row">
                             <td class="feature-name">Cognitive Memory</td>
-                            <td class="check">✓ Persistent</td>
-                            <td class="cross">✗ Per-session only</td>
-                            <td class="cross">✗ Limited</td>
-                        </tr>
-                        <tr class="highlight-row">
-                            <td class="feature-name">Emotional Intelligence</td>
-                            <td class="check">✓ Empathy engine</td>
-                            <td class="cross">✗ No</td>
-                            <td class="cross">✗ No</td>
-                        </tr>
-                        <tr class="highlight-row">
-                            <td class="feature-name">System Integration</td>
-                            <td class="check">✓ Arch Linux native</td>
-                            <td class="cross">✗ Cloud-only</td>
-                            <td class="cross">✗ Cloud-only</td>
+                            <td>Limited session context</td>
+                            <td class="check">✓ Persistent SQLite-backed memory</td>
                         </tr>
                         <tr>
+                            <td class="feature-name">System Access</td>
+                            <td>Basic file operations</td>
+                            <td class="check">✓ Full Arch Linux + AUR package management</td>
+                        </tr>
+                        <tr class="highlight-row">
+                            <td class="feature-name">Terminal Integration</td>
+                            <td>Standard CLI</td>
+                            <td class="check">✓ Tmux-based async execution</td>
+                        </tr>
+                        <tr>
+                            <td class="feature-name">Emotional Adaptation</td>
+                            <td>—</td>
+                            <td class="check">✓ Sentiment-aware empathy engine</td>
+                        </tr>
+                        <tr class="highlight-row">
                             <td class="feature-name">Package Management</td>
-                            <td class="check">✓ AUR + official</td>
-                            <td class="cross">✗ N/A</td>
-                            <td class="cross">✗ N/A</td>
+                            <td>—</td>
+                            <td class="check">✓ Native AUR integration via yay</td>
                         </tr>
                         <tr>
-                            <td class="feature-name">Action Registry</td>
-                            <td class="check">✓ Auto-discover CLI</td>
-                            <td class="cross">✗ No</td>
-                            <td class="cross">✗ No</td>
+                            <td class="feature-name">Action Discovery</td>
+                            <td>Manual tool registration</td>
+                            <td class="check">✓ Auto-crawl CLI documentation</td>
                         </tr>
-                        <tr>
-                            <td class="feature-name">Self-Hosted</td>
-                            <td class="check">✓ Local data</td>
-                            <td class="cross">✗ Cloud</td>
-                            <td class="cross">✗ Cloud</td>
-                        </tr>
-                        <tr>
-                            <td class="feature-name">OpenAI Compatible</td>
-                            <td class="check">✓ Drop-in API</td>
-                            <td class="cross">✗ N/A</td>
-                            <td class="cross">✗ N/A</td>
+                        <tr class="highlight-row">
+                            <td class="feature-name">Sandboxing</td>
+                            <td>Local execution</td>
+                            <td class="check">✓ Docker container isolation</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            
+            <div style="margin-top: 2rem; text-align: center; max-width: 700px; margin-left: auto; margin-right: auto;">
+                <p style="color: var(--gray); font-size: 1rem; margin-bottom: 1rem;">
+                    <strong>Choose OpenClaw if:</strong> You want a lightweight, general-purpose local AI agent.
+                </p>
+                <p style="color: var(--gray); font-size: 1rem;">
+                    <strong>Choose OpenAura if:</strong> You want an AI that knows your Arch Linux system, remembers everything about your setup, and can actually manage packages and run commands for you.
+                </p>
             </div>
         </div>
     </section>
