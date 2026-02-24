@@ -17,7 +17,7 @@ git clone https://github.com/mattstyles333/openaur.git && cd openaur && cp .env.
 
 ## What is OpenAura?
 
-LLMs like GPT-4 and Claude are incredible at reasoning, but they have a major limitation: **they don't know you**. Every conversation starts from scratch. They can't see your system, remember your preferences, or actually do things on your behalf.
+LLMs are incredible at reasoning, but they have a major limitation: **they don't know you**. Every conversation starts from scratch. They can't see your system, remember your preferences, or actually do things on your behalf.
 
 **OpenAura bridges that gap.**
 
@@ -44,14 +44,14 @@ You know the drill. You spend 20 minutes explaining your nginx setup to ChatGPT,
 
 | Use Case | Best Tool | Why |
 |----------|-----------|-----|
-| General knowledge questions | ChatGPT, Claude | They're optimized for broad reasoning |
+| General knowledge questions | Latest LLMs (ChatGPT, Claude, etc.) | Optimized for broad reasoning |
 | Your specific system setup | **OpenAura** | Remembers your configs, packages, preferences |
 | Installing/configuring Arch packages | **OpenAura** | Native AUR integration, can actually run commands |
-| Complex reasoning tasks | ChatGPT, Claude | State-of-the-art models |
+| Complex reasoning tasks | Latest LLMs | State-of-the-art models |
 | Long-running automation | **OpenAura** | Tmux-based async execution |
 | Code review across sessions | **OpenAura** | Remembers your codebase context |
 
-**Bottom line:** OpenAura isn't trying to replace ChatGPT. It's for when you want an AI that knows *your* systems and can *actually do things* for you.
+**Bottom line:** OpenAura isn't trying to replace those tools. It's for when you want an AI that knows *your* systems and can *actually do things* for you.
 
 ---
 
